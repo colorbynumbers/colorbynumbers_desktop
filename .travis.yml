@@ -3,12 +3,12 @@ language: python
 python:
   - "3.6"
 
-before_cache:
-  - rm -rf $HOME/miniconda/conda-bld $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var
-
 cache:
   directories:
     - $HOME/miniconda
+
+before_cache:
+  - rm -rf $HOME/miniconda/conda-bld $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var
 
 install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
