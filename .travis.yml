@@ -3,26 +3,9 @@ language: python
 python:
   - "3.6"
 
-cache:
-  directories:
-    - $HOME/miniconda
-
-before_cache:
-  - rm -rf $HOME/miniconda/conda-bld $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var
-
-before_install:
-  - if test -e $HOME/miniconda/bin; then
-        echo "miniconda already installed.";
-      else
-        echo "Installing miniconda.";
-        rm -rf $HOME/miniconda;
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-        bash miniconda.sh -b -p $HOME/miniconda;
-    fi
-
-
 install:
-
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
@@ -38,6 +21,5 @@ install:
   - conda install pycodestyle
 
 script:
-  - python --version
   - pycodestyle .
   - pytest
