@@ -18,4 +18,4 @@ install:
   - conda install pytest
 script:
   - pycodestyle .
-  -  
+  - pytest
