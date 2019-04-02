@@ -16,6 +16,7 @@ install:
   - conda install opencv
   - conda install pyqt
   - conda install pytest
+  - conda install pycodestyle
 script:
   - pycodestyle .
   - pytest
