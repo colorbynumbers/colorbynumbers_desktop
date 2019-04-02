@@ -4,7 +4,7 @@ python:
   - "3.6"
 
 before_cache:
-	- rm -rf $HOME/miniconda/conda-bld $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var
+  - rm -rf $HOME/miniconda/conda-bld $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var
 
 cache:
   directories:
