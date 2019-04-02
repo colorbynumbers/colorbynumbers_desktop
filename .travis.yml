@@ -38,5 +38,6 @@ install:
   - conda install pycodestyle
 
 script:
+  - python --version
   - pycodestyle .
   - pytest
