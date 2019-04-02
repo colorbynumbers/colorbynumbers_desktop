@@ -1,6 +1,15 @@
 language: python
+
 python:
   - "3.6"
+
+cache:
+  directories:
+    - $HOME/miniconda
+
+before_cache:
+	- rm -rf $HOME/miniconda/conda-bld $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var
+
 install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
@@ -17,6 +26,7 @@ install:
   - conda install pyqt
   - conda install pytest
   - conda install pycodestyle
+
 script:
   - pycodestyle .
   - pytest
