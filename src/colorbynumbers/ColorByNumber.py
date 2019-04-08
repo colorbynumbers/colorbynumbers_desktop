@@ -3,16 +3,18 @@
 import sys
 from PySide2.QtWidgets import QApplication
 
-from model.Canvas import Canvas
 from view.MainWindow import MainWindow
+from controller.Controller import Controller
+from model.Canvas import Canvas
 
-# ToDo create GUI and Controller and Model
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ui = MainWindow()
+    ui.show()
 
-app = QApplication(sys.argv)
-window = MainWindow()
-window.show()
+    canvas = Canvas(0, 0)
+    controller = Controller(ui, canvas)
 
-can = Canvas(64, 32)
-print(can)
+    ui.set_controller(controller)
 
-sys.exit(app.exec_())
+    sys.exit(app.exec_())
