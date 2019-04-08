@@ -18,6 +18,7 @@ install:
   - source activate test-env
   - conda install numpy-base
   - conda install numpy
+  - conda install pillow
   - conda install pytest
   - conda install pycodestyle
   - pip install pyside2
