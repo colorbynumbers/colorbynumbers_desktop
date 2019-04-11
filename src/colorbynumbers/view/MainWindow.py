@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
             pass
         elif img.mode == "L":
             img = img.convert("RGBA")
-        data = img.convert("RGBA").tobytes("raw", "RGBA")
+        data = img.convert("RGBA").tobytes("raw", "BGRA")
         qim = QImage(data, img.size[0], img.size[1], QImage.Format_ARGB32)
         pixmap = QPixmap.fromImage(qim)
         return pixmap
