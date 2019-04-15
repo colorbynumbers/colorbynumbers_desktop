@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
         self.resized.connect(self.resize_image)
 
         self.ui.toolButtonOpenPhoto.clicked.connect(self.__select_image)
+        self.ui.pushButtonStart.clicked.connect(self.__start_computation)
 
         # TODO impelement slots for other Buttons
 
@@ -33,10 +34,15 @@ class MainWindow(QMainWindow):
 
     def __select_image(self):
         path = QFileDialog.getOpenFileName(self, "Select Image")[0]
-        self.controller.open_image(path)
+        if path:
+            self.controller.open_image(path)
+
+    def __start_computation(self):
+        self.controller.compute_canvas()
 
     def display_image(self, img):
-        self.scene.clear()
+        self.scene = QGraphicsScene()
+        self.ui.graphicsView.setScene(self.scene)
 
         pixMap = self.__pil_to_pixmap(img)
         self.scene.addPixmap(pixMap)
@@ -61,8 +67,6 @@ class MainWindow(QMainWindow):
         if self.controller:
             self.ui.graphicsView.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
                                                   self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
-        else:
-            self.ui.graphicsView.fitInView(QRectF(0, 0, 1, 1), Qt.KeepAspectRatio)
         self.scene.update()
 
     @staticmethod
