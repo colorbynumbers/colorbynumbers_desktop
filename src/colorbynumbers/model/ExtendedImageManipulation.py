@@ -12,4 +12,4 @@ class ExtendedImageManipulation:
 
     @staticmethod
     def refine_edge(image):
-        return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=13)))
+        return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=5)))

@@ -1,22 +1,27 @@
 # Created by Lionel Kornberger at 2019-04-01
 from model.ExtendedImage import ExtendedImage
 from model.ExtendedImageManipulation import ExtendedImageManipulation
+from Observable import Observable
 
 
-class Controller:
+class Controller(Observable):
 
     def __init__(self, ui, canvas):
+        super(Controller,self).__init__()
+
         self.ui = ui
         self.canvas = canvas
         self.img = None
+
+        self.register_observer(self.ui)
 
     def open_image(self, path):
         try:
             from PIL import Image
             self.img = ExtendedImage(Image.open(path))
-            self.ui.display_image(self.img)
+            self.notify_observers(self.img)
         except OSError as err:
-            self.ui.show_message(str(err))
+            self.notify_observers(str(err))
             return
 
     def get_image_size(self):
@@ -28,4 +33,4 @@ class Controller:
     def compute_canvas(self):
         self.img = ExtendedImageManipulation.reduce_colors(image=self.img, color_amount=8)
         self.img = ExtendedImageManipulation.refine_edge(image=self.img)
-        self.ui.display_image(self.img)
+        self.notify_observers(self.img)

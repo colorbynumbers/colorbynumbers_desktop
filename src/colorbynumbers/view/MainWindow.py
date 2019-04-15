@@ -1,14 +1,13 @@
 # Created by Lionel Kornberger at 2019-04-07
 
-from PySide2.QtWidgets import *
-# from PySide2.QtWidgets.QGraphicsWidget import *
 from PySide2.QtWidgets import QMainWindow, QGraphicsScene, QFileDialog, QMessageBox
 from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtCore import QRectF, Signal, Qt
+from Observer import Observer
 from ui_mainwindow import Ui_MainWindow
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Observer):
     resized = Signal()
 
     def __init__(self):
@@ -43,10 +42,9 @@ class MainWindow(QMainWindow):
     def display_image(self, img):
         self.scene = QGraphicsScene()
         self.ui.graphicsView.setScene(self.scene)
-
-        pixMap = self.__pil_to_pixmap(img)
-        self.scene.addPixmap(pixMap)
         self.resize_image()
+        pixmap = self.__pil_to_pixmap(img)
+        self.scene.addPixmap(pixmap)
 
     @staticmethod
     def __pil_to_pixmap(img):
@@ -74,3 +72,9 @@ class MainWindow(QMainWindow):
         msgBox = QMessageBox()
         msgBox.setText(text)
         msgBox.exec_()
+
+    def notify(self, update_data):
+        if isinstance(update_data, str):
+            self.show_message(update_data)
+        else:
+            self.display_image(update_data)
