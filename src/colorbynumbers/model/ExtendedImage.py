@@ -1,12 +1,10 @@
 # Created by Lionel Kornberger at 2019-04-08
-from PIL import Image
 
 
 class ExtendedImage(object):
 
-    def __init__(self, path):
-        self.__img = Image.open(path)
-        self.__path = path
+    def __init__(self, img):
+        self.__img = img
 
     def __getattr__(self, key):
         if key == '__img':
@@ -14,5 +12,6 @@ class ExtendedImage(object):
             raise AttributeError()
         return getattr(self.__img, key)
 
-    def scale(self, size):
-        pass
+    def resize(self, size="DIN A4"):
+        #Todo implement resizing to given DIN Format
+        return ExtendedImage(self.__img.resize(size=size))
