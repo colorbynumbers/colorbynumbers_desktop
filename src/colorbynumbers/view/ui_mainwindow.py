@@ -3,17 +3,18 @@
 # Form implementation generated from reading ui file 'mainwindow.ui',
 # licensing of 'mainwindow.ui' applies.
 #
-# Created: Sat May  4 18:35:26 2019
+# Created: Sat May  4 19:21:33 2019
 #      by: pyside2-uic  running on PySide2 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
+from sys import platform
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(896, 550)
+        MainWindow.resize(896, 614)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -22,9 +23,10 @@ class Ui_MainWindow(object):
         self.graphicsView.setObjectName("graphicsView")
         self.gridLayout.addWidget(self.graphicsView, 0, 1, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayoutLeft = QtWidgets.QVBoxLayout()
-        self.verticalLayoutLeft.setSpacing(8)
+        self.verticalLayoutLeft.setSpacing(6)
         self.verticalLayoutLeft.setObjectName("verticalLayoutLeft")
         self.labelOpenPhoto = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -33,6 +35,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelOpenPhoto.sizePolicy().hasHeightForWidth())
         self.labelOpenPhoto.setSizePolicy(sizePolicy)
         self.labelOpenPhoto.setMinimumSize(QtCore.QSize(0, 22))
+        self.labelOpenPhoto.setMaximumSize(QtCore.QSize(16777215, 22))
         self.labelOpenPhoto.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.labelOpenPhoto.setObjectName("labelOpenPhoto")
         self.verticalLayoutLeft.addWidget(self.labelOpenPhoto)
@@ -43,6 +46,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelNumberOfColors.sizePolicy().hasHeightForWidth())
         self.labelNumberOfColors.setSizePolicy(sizePolicy)
         self.labelNumberOfColors.setMinimumSize(QtCore.QSize(0, 26))
+        self.labelNumberOfColors.setMaximumSize(QtCore.QSize(16777215, 26))
         self.labelNumberOfColors.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.labelNumberOfColors.setObjectName("labelNumberOfColors")
         self.verticalLayoutLeft.addWidget(self.labelNumberOfColors)
@@ -53,6 +57,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelPrintSize.sizePolicy().hasHeightForWidth())
         self.labelPrintSize.setSizePolicy(sizePolicy)
         self.labelPrintSize.setMinimumSize(QtCore.QSize(0, 26))
+        self.labelPrintSize.setMaximumSize(QtCore.QSize(16777215, 26))
         self.labelPrintSize.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.labelPrintSize.setObjectName("labelPrintSize")
         self.verticalLayoutLeft.addWidget(self.labelPrintSize)
@@ -63,6 +68,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelMinSurfaceSize.sizePolicy().hasHeightForWidth())
         self.labelMinSurfaceSize.setSizePolicy(sizePolicy)
         self.labelMinSurfaceSize.setMinimumSize(QtCore.QSize(0, 24))
+        self.labelMinSurfaceSize.setMaximumSize(QtCore.QSize(16777215, 24))
         self.labelMinSurfaceSize.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.labelMinSurfaceSize.setObjectName("labelMinSurfaceSize")
         self.verticalLayoutLeft.addWidget(self.labelMinSurfaceSize)
@@ -73,14 +79,24 @@ class Ui_MainWindow(object):
         self.verticalLayoutLeft.addWidget(self.pushButtonStart)
         self.horizontalLayout.addLayout(self.verticalLayoutLeft)
         self.verticalLayoutRight = QtWidgets.QVBoxLayout()
-        self.verticalLayoutRight.setSpacing(8)
+        if platform == "darwin":
+            self.verticalLayoutRight.setSpacing(8)
+        else:
+            self.verticalLayoutRight.setSpacing(6)
         self.verticalLayoutRight.setObjectName("verticalLayoutRight")
         self.toolButtonOpenPhoto = QtWidgets.QToolButton(self.centralwidget)
         self.toolButtonOpenPhoto.setMinimumSize(QtCore.QSize(0, 22))
+        self.toolButtonOpenPhoto.setMaximumSize(QtCore.QSize(16777215, 22))
         self.toolButtonOpenPhoto.setObjectName("toolButtonOpenPhoto")
         self.verticalLayoutRight.addWidget(self.toolButtonOpenPhoto)
         self.spinBoxNumberOfColors = QtWidgets.QSpinBox(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBoxNumberOfColors.sizePolicy().hasHeightForWidth())
+        self.spinBoxNumberOfColors.setSizePolicy(sizePolicy)
         self.spinBoxNumberOfColors.setMinimumSize(QtCore.QSize(0, 26))
+        self.spinBoxNumberOfColors.setMaximumSize(QtCore.QSize(16777215, 26))
         self.spinBoxNumberOfColors.setMinimum(1)
         self.spinBoxNumberOfColors.setMaximum(100)
         self.spinBoxNumberOfColors.setProperty("value", 20)
@@ -93,6 +109,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.comboBoxPrintSize.sizePolicy().hasHeightForWidth())
         self.comboBoxPrintSize.setSizePolicy(sizePolicy)
         self.comboBoxPrintSize.setMinimumSize(QtCore.QSize(0, 26))
+        self.comboBoxPrintSize.setMaximumSize(QtCore.QSize(16777215, 26))
         self.comboBoxPrintSize.setObjectName("comboBoxPrintSize")
         self.comboBoxPrintSize.addItem("")
         self.comboBoxPrintSize.addItem("")
@@ -107,6 +124,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.spinBoxMinSurfaceSize.sizePolicy().hasHeightForWidth())
         self.spinBoxMinSurfaceSize.setSizePolicy(sizePolicy)
         self.spinBoxMinSurfaceSize.setMinimumSize(QtCore.QSize(0, 24))
+        self.spinBoxMinSurfaceSize.setMaximumSize(QtCore.QSize(16777215, 24))
         self.spinBoxMinSurfaceSize.setMinimum(1)
         self.spinBoxMinSurfaceSize.setMaximum(100)
         self.spinBoxMinSurfaceSize.setProperty("value", 20)
@@ -142,4 +160,3 @@ class Ui_MainWindow(object):
         self.comboBoxPrintSize.setItemText(4, QtWidgets.QApplication.translate("MainWindow", "DIN A5", None, -1))
         self.comboBoxPrintSize.setCurrentText(QtWidgets.QApplication.translate("MainWindow", "DIN A4", None, -1))
         self.pushButtonExport.setText(QtWidgets.QApplication.translate("MainWindow", "export ...", None, -1))
-
