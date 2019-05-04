@@ -31,6 +31,6 @@ class Controller(Observable):
             return 0, 0
 
     def compute_canvas(self):
-        self.img = ExtendedImageManipulation.reduce_colors(image=self.img, color_amount=8)
+        self.img = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=20)
         self.img = ExtendedImageManipulation.refine_edge(image=self.img)
         self.notify_observers(self.img)
