@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'mainwindow.ui',
 # licensing of 'mainwindow.ui' applies.
 #
-# Created: Sun Apr  7 14:37:06 2019
+# Created: Sat May  4 18:35:26 2019
 #      by: pyside2-uic  running on PySide2 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -73,15 +73,17 @@ class Ui_MainWindow(object):
         self.verticalLayoutLeft.addWidget(self.pushButtonStart)
         self.horizontalLayout.addLayout(self.verticalLayoutLeft)
         self.verticalLayoutRight = QtWidgets.QVBoxLayout()
-        self.verticalLayoutRight.setSpacing(11)
+        self.verticalLayoutRight.setSpacing(8)
         self.verticalLayoutRight.setObjectName("verticalLayoutRight")
         self.toolButtonOpenPhoto = QtWidgets.QToolButton(self.centralwidget)
+        self.toolButtonOpenPhoto.setMinimumSize(QtCore.QSize(0, 22))
         self.toolButtonOpenPhoto.setObjectName("toolButtonOpenPhoto")
         self.verticalLayoutRight.addWidget(self.toolButtonOpenPhoto)
         self.spinBoxNumberOfColors = QtWidgets.QSpinBox(self.centralwidget)
+        self.spinBoxNumberOfColors.setMinimumSize(QtCore.QSize(0, 26))
         self.spinBoxNumberOfColors.setMinimum(1)
         self.spinBoxNumberOfColors.setMaximum(100)
-        self.spinBoxNumberOfColors.setProperty("value", 16)
+        self.spinBoxNumberOfColors.setProperty("value", 20)
         self.spinBoxNumberOfColors.setObjectName("spinBoxNumberOfColors")
         self.verticalLayoutRight.addWidget(self.spinBoxNumberOfColors)
         self.comboBoxPrintSize = QtWidgets.QComboBox(self.centralwidget)
@@ -90,7 +92,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.comboBoxPrintSize.sizePolicy().hasHeightForWidth())
         self.comboBoxPrintSize.setSizePolicy(sizePolicy)
-        self.comboBoxPrintSize.setMinimumSize(QtCore.QSize(0, 0))
+        self.comboBoxPrintSize.setMinimumSize(QtCore.QSize(0, 26))
         self.comboBoxPrintSize.setObjectName("comboBoxPrintSize")
         self.comboBoxPrintSize.addItem("")
         self.comboBoxPrintSize.addItem("")
@@ -104,6 +106,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.spinBoxMinSurfaceSize.sizePolicy().hasHeightForWidth())
         self.spinBoxMinSurfaceSize.setSizePolicy(sizePolicy)
+        self.spinBoxMinSurfaceSize.setMinimumSize(QtCore.QSize(0, 24))
         self.spinBoxMinSurfaceSize.setMinimum(1)
         self.spinBoxMinSurfaceSize.setMaximum(100)
         self.spinBoxMinSurfaceSize.setProperty("value", 20)
