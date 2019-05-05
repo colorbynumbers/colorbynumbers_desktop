@@ -24,6 +24,7 @@ class MainWindow(QMainWindow, Observer):
 
         # slots
         self.resized.connect(self.resize_image)
+        self.ui.tabWidget.currentChanged.connect(self.resize_image)
 
         self.ui.toolButtonOpenPhoto.clicked.connect(self.__select_image)
         self.ui.pushButtonStart.clicked.connect(self.__start_computation)
@@ -59,14 +60,13 @@ class MainWindow(QMainWindow, Observer):
     def display_image(self, img_data):
         self.ui.graphicsViewOriginal.setScene(self.scene_org)
         self.__add_image_to_scene(self.scene_org, img_data[0])
-        self.resize_image()
 
         if img_data[1] and img_data[2]:
             self.ui.graphicsViewReducedColors.setScene(self.scene_reduced)
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
-            self.resize_image()
-
             self.ui.tabWidget.setCurrentIndex(1)
+
+        self.resize_image()
 
     def __add_image_to_scene(self, scene, image):
         pixmap = self.__pil_to_pixmap(image)
@@ -90,6 +90,10 @@ class MainWindow(QMainWindow, Observer):
     def resize_image(self):
         if self.controller:
             self.ui.graphicsViewOriginal.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
+                                                          self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
+            self.ui.graphicsViewReducedColors.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
+                                                               self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
+            self.ui.graphicsViewTemplate.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
                                                           self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
         self.scene_org.update()
         self.scene_reduced.update()
