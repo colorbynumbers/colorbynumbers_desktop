@@ -1,8 +1,8 @@
 # Created by Lionel Kornberger at 2019-04-07
 
-from PySide2.QtWidgets import QMainWindow, QGraphicsScene, QFileDialog, QMessageBox
+from PySide2.QtWidgets import QMainWindow, QGraphicsScene, QFileDialog, QMessageBox, QWidget
 from PySide2.QtGui import QImage, QPixmap
-from PySide2.QtCore import QRectF, Signal, Qt
+from PySide2.QtCore import QRectF, Signal, Qt, QEvent
 from Observer import Observer
 from ui_mainwindow import Ui_MainWindow
 
@@ -15,8 +15,10 @@ class MainWindow(QMainWindow, Observer):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.scene = QGraphicsScene()
-        self.ui.graphicsView.setScene(self.scene)
+        self.scene_org = QGraphicsScene()
+        self.scene_reduced = QGraphicsScene()
+        self.scene_template = QGraphicsScene()
+        self.ui.graphicsViewOriginal.setScene(self.scene_org)
 
         self.controller = None
 
@@ -26,7 +28,17 @@ class MainWindow(QMainWindow, Observer):
         self.ui.toolButtonOpenPhoto.clicked.connect(self.__select_image)
         self.ui.pushButtonStart.clicked.connect(self.__start_computation)
 
-        # TODO impelement slots for other Buttons
+        self.installEventFilter(self)
+
+    def eventFilter(self, widget, event):
+        if event.type() == QEvent.KeyPress:
+            key = event.key()
+            if key == Qt.Key_Return:
+                self.__start_computation()
+            elif key == Qt.Key_Enter:
+                self.__start_computation()
+            return True
+        return QWidget.eventFilter(self, widget, event)
 
     def set_controller(self, controller):
         self.controller = controller
@@ -35,16 +47,30 @@ class MainWindow(QMainWindow, Observer):
         path = QFileDialog.getOpenFileName(self, "Select Image")[0]
         if path:
             self.controller.open_image(path)
+            self.ui.tabWidget.setCurrentIndex(0)
 
     def __start_computation(self):
-        self.controller.compute_canvas()
+        if self.controller:
+            self.controller.compute_canvas(n_colors=self.ui.spinBoxNumberOfColors.value(),
+                                           print_size=self.ui.comboBoxPrintSize.currentText(),
+                                           min_surface=self.ui.spinBoxMinSurfaceSize.value()
+                                           )
 
-    def display_image(self, img):
-        self.scene = QGraphicsScene()
-        self.ui.graphicsView.setScene(self.scene)
+    def display_image(self, img_data):
+        self.ui.graphicsViewOriginal.setScene(self.scene_org)
+        self.__add_image_to_scene(self.scene_org, img_data[0])
         self.resize_image()
-        pixmap = self.__pil_to_pixmap(img)
-        self.scene.addPixmap(pixmap)
+
+        if img_data[1] and img_data[2]:
+            self.ui.graphicsViewReducedColors.setScene(self.scene_reduced)
+            self.__add_image_to_scene(self.scene_reduced, img_data[1])
+            self.resize_image()
+
+            self.ui.tabWidget.setCurrentIndex(1)
+
+    def __add_image_to_scene(self, scene, image):
+        pixmap = self.__pil_to_pixmap(image)
+        scene.addPixmap(pixmap)
 
     @staticmethod
     def __pil_to_pixmap(img):
@@ -63,9 +89,11 @@ class MainWindow(QMainWindow, Observer):
 
     def resize_image(self):
         if self.controller:
-            self.ui.graphicsView.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
-                                                  self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
-        self.scene.update()
+            self.ui.graphicsViewOriginal.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
+                                                          self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
+        self.scene_org.update()
+        self.scene_reduced.update()
+        self.scene_template.update()
 
     @staticmethod
     def show_message(text):

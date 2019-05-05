@@ -7,11 +7,12 @@ from Observable import Observable
 class Controller(Observable):
 
     def __init__(self, ui, canvas):
-        super(Controller,self).__init__()
+        super(Controller, self).__init__()
 
         self.ui = ui
         self.canvas = canvas
         self.img = None
+        self.img_reduced = None
 
         self.register_observer(self.ui)
 
@@ -19,7 +20,7 @@ class Controller(Observable):
         try:
             from PIL import Image
             self.img = ExtendedImage(Image.open(path))
-            self.notify_observers(self.img)
+            self.notify_observers((self.img, self.img_reduced, self.canvas))
         except OSError as err:
             self.notify_observers(str(err))
             return
@@ -30,7 +31,10 @@ class Controller(Observable):
         else:
             return 0, 0
 
-    def compute_canvas(self):
-        self.img = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=20)
-        self.img = ExtendedImageManipulation.refine_edge(image=self.img)
-        self.notify_observers(self.img)
+    def compute_canvas(self, n_colors, print_size, min_surface):
+        if self.img:
+            self.img_reduced = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
+            self.img_reduced = ExtendedImageManipulation.refine_edge(image=self.img_reduced)
+            self.notify_observers((self.img, self.img_reduced, self.canvas))
+        else:
+            self.notify_observers("No Photo opened!\nPlease open a photo first.")

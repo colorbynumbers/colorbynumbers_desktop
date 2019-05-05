@@ -16,12 +16,12 @@ class ExtendedImageManipulation:
         width, height, dimension, image = ExtendedImageManipulation.__transform_to_2D_np_array__(image)
 
         image_sample = shuffle(image, random_state=0)[:1000]
-        k_means = KMeans(n_clusters=n_colors, random_state=0, n_jobs=-1).fit(image_sample)
+        k_means = KMeans(n_clusters=n_colors, random_state=0).fit(image_sample)
         labels = k_means.predict(image)
 
         image = ExtendedImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width, height, dimension)
         image = color.lab2rgb(image)
-        return ExtendedImage(Image.fromarray(np.uint8(image*255)))
+        return ExtendedImage(Image.fromarray(np.uint8(image * 255)))
 
     @staticmethod
     def __recreate_image__(centers, labels, width, height, dimension):
@@ -42,4 +42,4 @@ class ExtendedImageManipulation:
 
     @staticmethod
     def refine_edge(image):
-        return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=5)))
+        return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=11)))
