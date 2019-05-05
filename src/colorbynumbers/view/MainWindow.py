@@ -58,6 +58,7 @@ class MainWindow(QMainWindow, Observer):
                                            )
 
     def display_image(self, img_data):
+        self.__clear_scenes()
         self.ui.graphicsViewOriginal.setScene(self.scene_org)
         self.__add_image_to_scene(self.scene_org, img_data[0])
 
@@ -67,6 +68,11 @@ class MainWindow(QMainWindow, Observer):
             self.ui.tabWidget.setCurrentIndex(1)
 
         self.resize_image()
+
+    def __clear_scenes(self):
+        self.scene_org = QGraphicsScene()
+        self.scene_reduced = QGraphicsScene()
+        self.scene_template = QGraphicsScene()
 
     def __add_image_to_scene(self, scene, image):
         pixmap = self.__pil_to_pixmap(image)
