@@ -20,6 +20,7 @@ class Controller(Observable):
         try:
             from PIL import Image
             self.img = ExtendedImage(Image.open(path))
+            self.img_reduced = None
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         except OSError as err:
             self.notify_observers(str(err))

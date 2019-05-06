@@ -49,6 +49,7 @@ class MainWindow(QMainWindow, Observer):
         if path:
             self.controller.open_image(path)
             self.ui.tabWidget.setCurrentIndex(0)
+            self.resize_image()
 
     def __start_computation(self):
         if self.controller:
@@ -59,20 +60,19 @@ class MainWindow(QMainWindow, Observer):
 
     def display_image(self, img_data):
         self.__clear_scenes()
-        self.ui.graphicsViewOriginal.setScene(self.scene_org)
         self.__add_image_to_scene(self.scene_org, img_data[0])
 
-        if img_data[1]:
-            self.ui.graphicsViewReducedColors.setScene(self.scene_reduced)
+        if img_data[1] and img_data[2]:
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
-
-        self.resize_image()
 
     def __clear_scenes(self):
         self.scene_org = QGraphicsScene()
         self.scene_reduced = QGraphicsScene()
         self.scene_template = QGraphicsScene()
+        self.ui.graphicsViewOriginal.setScene(self.scene_org)
+        self.ui.graphicsViewReducedColors.setScene(self.scene_reduced)
+        self.ui.graphicsViewTemplate.setScene(self.scene_template)
 
     def __add_image_to_scene(self, scene, image):
         pixmap = self.__pil_to_pixmap(image)
