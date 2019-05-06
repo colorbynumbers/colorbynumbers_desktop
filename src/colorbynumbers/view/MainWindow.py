@@ -67,6 +67,8 @@ class MainWindow(QMainWindow, Observer):
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
 
+        self.resize_image()
+
     def __clear_scenes(self):
         self.scene_org = QGraphicsScene()
         self.scene_reduced = QGraphicsScene()
