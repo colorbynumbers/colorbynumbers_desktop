@@ -31,10 +31,11 @@ class Controller(Observable):
         else:
             return 0, 0
 
-    def compute_canvas(self, n_colors, print_size, min_surface):
+    def compute_canvas(self, n_colors, print_size, min_surface, is_aggressive=False):
         if self.img:
             self.img_reduced = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
-            self.img_reduced = ExtendedImageManipulation.refine_edge(image=self.img_reduced)
+            self.img_reduced = ExtendedImageManipulation.refine_edge(image=self.img_reduced,
+                                                                     is_aggressive=is_aggressive)
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.")

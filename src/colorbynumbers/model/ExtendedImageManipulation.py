@@ -3,6 +3,9 @@ import numpy as np
 from PIL import ImageFilter, Image
 from ExtendedImage import *
 
+AGGRESSIVE_DE_SPECKLE: int = 11
+NORMAL_DE_SPECKLE: int = 5
+
 
 class ExtendedImageManipulation:
 
@@ -41,5 +44,8 @@ class ExtendedImageManipulation:
         return width, height, dimension, image
 
     @staticmethod
-    def refine_edge(image):
-        return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=11)))
+    def refine_edge(image, is_aggressive):
+        if is_aggressive:
+            return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=AGGRESSIVE_DE_SPECKLE)))
+        else:
+            return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=NORMAL_DE_SPECKLE)))

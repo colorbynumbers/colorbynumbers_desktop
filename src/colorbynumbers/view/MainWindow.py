@@ -54,20 +54,18 @@ class MainWindow(QMainWindow, Observer):
         if self.controller:
             self.controller.compute_canvas(n_colors=self.ui.spinBoxNumberOfColors.value(),
                                            print_size=self.ui.comboBoxPrintSize.currentText(),
-                                           min_surface=self.ui.spinBoxMinSurfaceSize.value()
-                                           )
+                                           min_surface=self.ui.spinBoxMinSurfaceSize.value(),
+                                           is_aggressive=self.ui.checkBox.isChecked())
 
     def display_image(self, img_data):
         self.__clear_scenes()
         self.ui.graphicsViewOriginal.setScene(self.scene_org)
         self.__add_image_to_scene(self.scene_org, img_data[0])
 
-        if img_data[1] and img_data[2]:
+        if img_data[1]:
             self.ui.graphicsViewReducedColors.setScene(self.scene_reduced)
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
-
-        self.resize_image()
 
     def __clear_scenes(self):
         self.scene_org = QGraphicsScene()
@@ -101,9 +99,6 @@ class MainWindow(QMainWindow, Observer):
                                                                self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
             self.ui.graphicsViewTemplate.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
                                                           self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
-        self.scene_org.update()
-        self.scene_reduced.update()
-        self.scene_template.update()
 
     @staticmethod
     def show_message(text):
