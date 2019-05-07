@@ -10,6 +10,7 @@
 
 from PySide2 import QtCore, QtGui, QtWidgets
 from sys import platform
+from Config import get_config
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -68,10 +69,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayoutLeft = QtWidgets.QVBoxLayout()
-        if platform == "darwin":
-            self.verticalLayoutLeft.setSpacing(6)
-        else:
-            self.verticalLayoutLeft.setSpacing(8)
+        self.verticalLayoutLeft.setSpacing(get_config().getint('UI','LEFT_COLUMN_SPACING'))
         self.verticalLayoutLeft.setObjectName("verticalLayoutLeft")
         self.labelOpenPhoto = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)

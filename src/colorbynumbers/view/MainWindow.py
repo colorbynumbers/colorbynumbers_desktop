@@ -4,7 +4,8 @@ from PySide2.QtWidgets import QMainWindow, QGraphicsScene, QFileDialog, QMessage
 from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtCore import QRectF, Signal, Qt, QEvent
 from Observer import Observer
-from ui_mainwindow import Ui_MainWindow
+from view.ui_mainwindow import Ui_MainWindow
+from Config import get_config
 
 
 class MainWindow(QMainWindow, Observer):
@@ -45,11 +46,21 @@ class MainWindow(QMainWindow, Observer):
         self.controller = controller
 
     def __select_image(self):
-        path = QFileDialog.getOpenFileName(self, "Select Image")[0]
+        file_dialog = QFileDialog()
+        MainWindow.__set_file_dialog_options(file_dialog, get_config().getboolean('UI', 'NO_NATIVE_DIALOG'))
+
+        path = file_dialog.getOpenFileName(
+            self, 'Open File', " ../../",
+            'Images (*.png *.svg *.jpg *.jpeg)',
+            '')[0]
         if path:
             self.controller.open_image(path)
             self.ui.tabWidget.setCurrentIndex(0)
             self.resize_image()
+
+    @staticmethod
+    def __set_file_dialog_options(file_dialog, is_not_native_dialog):
+        file_dialog.setOption(QFileDialog.DontUseNativeDialog, is_not_native_dialog);
 
     def __start_computation(self):
         if self.controller:

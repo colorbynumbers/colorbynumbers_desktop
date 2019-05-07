@@ -1,7 +1,7 @@
 # Created by Lionel Kornberger at 2019-04-12
 import numpy as np
 from PIL import ImageFilter, Image
-from ExtendedImage import *
+from model.ExtendedImage import *
 
 AGGRESSIVE_DE_SPECKLE: int = 11
 NORMAL_DE_SPECKLE: int = 5
