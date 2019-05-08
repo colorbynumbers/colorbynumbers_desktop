@@ -15,6 +15,8 @@ class ExtendedImageManipulation:
         from sklearn.cluster import KMeans
         from sklearn.utils import shuffle
 
+        ExtendedImageManipulation.__scale_image(image)
+
         image = color.rgb2lab(image)
         width, height, dimension, image = ExtendedImageManipulation.__transform_to_2D_np_array__(image)
 
@@ -25,6 +27,11 @@ class ExtendedImageManipulation:
         image = ExtendedImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width, height, dimension)
         image = color.lab2rgb(image)
         return ExtendedImage(Image.fromarray(np.uint8(image * 255)))
+
+    @staticmethod
+    def __scale_image(image):
+        size = 2200, 2200
+        image.thumbnail(size, Image.ANTIALIAS)
 
     @staticmethod
     def __recreate_image__(centers, labels, width, height, dimension):
