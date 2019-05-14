@@ -5,7 +5,7 @@ import os
 
 DARWIN_CONFIG_FILE = '../../darwin.ini'
 WINDOWS_CONFIG_FILE = '../../windows.ini'
-LINUX_CONFIG_FILE = '/../../linux.ini'
+LINUX_CONFIG_FILE = '../../linux.ini'
 
 
 def get_os_name():
