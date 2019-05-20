@@ -1,10 +1,16 @@
 # Created by Lionel Kornberger at 2019-04-12
 import numpy as np
 from PIL import ImageFilter, Image
-from model.ExtendedImage import *
 
 AGGRESSIVE_DE_SPECKLE: int = 11
 NORMAL_DE_SPECKLE: int = 5
+
+DIN_SIZE = {
+    "DIN A1": (7016, 9933),
+    "DIN A2": (4961, 7016),
+    "DIN A3": (3508, 4961),
+    "DIN A4": (2480, 3508)
+}
 
 
 class ExtendedImageManipulation:
@@ -26,7 +32,7 @@ class ExtendedImageManipulation:
 
         image = ExtendedImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width, height, dimension)
         image = color.lab2rgb(image)
-        return ExtendedImage(Image.fromarray(np.uint8(image * 255)))
+        return Image.fromarray(np.uint8(image * 255))
 
     @staticmethod
     def __scale_image(image):
@@ -53,6 +59,12 @@ class ExtendedImageManipulation:
     @staticmethod
     def refine_edge(image, is_aggressive):
         if is_aggressive:
-            return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=AGGRESSIVE_DE_SPECKLE)))
+            return image.filter(ImageFilter.MedianFilter(size=AGGRESSIVE_DE_SPECKLE))
         else:
-            return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=NORMAL_DE_SPECKLE)))
+            return image.filter(ImageFilter.MedianFilter(size=NORMAL_DE_SPECKLE))
+
+    @staticmethod
+    def resize_to_din_format(image, din_format="DIN A4"):
+        # resize to match 300 dpi
+        size = DIN_SIZE[din_format]
+        return image.resize(size, Image.LANCZOS)

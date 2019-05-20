@@ -1,6 +1,5 @@
 # Created by Lionel Kornberger at 2019-04-01
-from model.ExtendedImage import ExtendedImage
-from model.ExtendedImageManipulation import ExtendedImageManipulation
+from model.ImageManipulation import ExtendedImageManipulation
 from Observable import Observable
 
 
@@ -19,7 +18,7 @@ class Controller(Observable):
     def open_image(self, path):
         try:
             from PIL import Image
-            self.img = ExtendedImage(Image.open(path))
+            self.img = Image.open(path)
             self.img_reduced = None
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         except OSError as err:
