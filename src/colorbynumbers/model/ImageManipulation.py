@@ -13,7 +13,13 @@ DIN_SIZE = {
 }
 
 
-class ExtendedImageManipulation:
+class ImageManipulation:
+
+    @staticmethod
+    def convert_gray_to_rgb(image):
+        if np.asarray(image).shape == (image.height, image.width):
+            return Image.fromarray(np.squeeze(np.stack((image,) * 3, -1)))
+        return image
 
     @staticmethod
     def reduce_colors(image, n_colors):
@@ -21,16 +27,16 @@ class ExtendedImageManipulation:
         from sklearn.cluster import KMeans
         from sklearn.utils import shuffle
 
-        ExtendedImageManipulation.__scale_image(image)
+        ImageManipulation.__scale_image(image)
 
         image = color.rgb2lab(image)
-        width, height, dimension, image = ExtendedImageManipulation.__transform_to_2D_np_array__(image)
+        width, height, dimension, image = ImageManipulation.__transform_to_2D_np_array__(image)
 
         image_sample = shuffle(image, random_state=0)[:1000]
         k_means = KMeans(n_clusters=n_colors, random_state=0).fit(image_sample)
         labels = k_means.predict(image)
 
-        image = ExtendedImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width, height, dimension)
+        image = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width, height, dimension)
         image = color.lab2rgb(image)
         return Image.fromarray(np.uint8(image * 255))
 

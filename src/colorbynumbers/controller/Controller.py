@@ -1,5 +1,5 @@
 # Created by Lionel Kornberger at 2019-04-01
-from model.ImageManipulation import ExtendedImageManipulation
+from model.ImageManipulation import ImageManipulation
 from Observable import Observable
 
 
@@ -19,6 +19,7 @@ class Controller(Observable):
         try:
             from PIL import Image
             self.img = Image.open(path)
+            self.img = ImageManipulation.convert_gray_to_rgb(self.img)
             self.img_reduced = None
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         except OSError as err:
@@ -33,9 +34,9 @@ class Controller(Observable):
 
     def compute_canvas(self, n_colors, print_size, min_surface, is_aggressive=False):
         if self.img:
-            self.img_reduced = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
-            self.img_reduced = ExtendedImageManipulation.refine_edge(image=self.img_reduced,
-                                                                     is_aggressive=is_aggressive)
+            self.img_reduced = ImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
+            self.img_reduced = ImageManipulation.refine_edge(image=self.img_reduced,
+                                                             is_aggressive=is_aggressive)
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.")
