@@ -1,5 +1,6 @@
 # Created by Lionel Kornberger at 2019-04-01
 from model.ImageManipulation import ImageManipulation
+from model.Export import export
 from Observable import Observable
 
 
@@ -9,7 +10,7 @@ class Controller(Observable):
         super(Controller, self).__init__()
 
         self.ui = ui
-        self.canvas = canvas
+        self.canvas = None
         self.img = None
         self.img_reduced = None
 
@@ -40,3 +41,9 @@ class Controller(Observable):
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.")
+
+    def export(self, din_format, file_name=""):
+        if self.canvas:
+            export(self.img, din_format, file_name)
+        else:
+            self.notify_observers(str("No Template generated!\nPlease start computation of template first."))

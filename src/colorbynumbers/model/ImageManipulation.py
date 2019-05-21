@@ -2,6 +2,9 @@
 import numpy as np
 from PIL import ImageFilter, Image
 
+ZERO = 0
+ONE = 1
+
 AGGRESSIVE_DE_SPECKLE: int = 11
 NORMAL_DE_SPECKLE: int = 5
 
@@ -9,7 +12,9 @@ DIN_SIZE = {
     "DIN A1": (7016, 9933),
     "DIN A2": (4961, 7016),
     "DIN A3": (3508, 4961),
-    "DIN A4": (2480, 3508)
+    "DIN A4": (2480, 3508),
+    "DIN A5": (1748, 2480)
+
 }
 
 
@@ -72,5 +77,15 @@ class ImageManipulation:
     @staticmethod
     def resize_to_din_format(image, din_format="DIN A4"):
         # resize to match 300 dpi
-        size = DIN_SIZE[din_format]
+        width, height = ImageManipulation.get_size_indicies(image)
+        size = DIN_SIZE[din_format][width], DIN_SIZE[din_format][height]
         return image.resize(size, Image.LANCZOS)
+
+    @staticmethod
+    def is_landscape(image):
+        return False if image.width < image.height else True
+
+    @staticmethod
+    def get_size_indicies(image):
+        width, height = (ONE, ZERO) if ImageManipulation.is_landscape(image) else (ZERO, ONE)
+        return width, height
