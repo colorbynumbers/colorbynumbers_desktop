@@ -37,6 +37,11 @@ class Controller(Observable):
             self.img_reduced = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
             self.img_reduced = ExtendedImageManipulation.refine_edge(image=self.img_reduced,
                                                                      is_aggressive=is_aggressive)
+            self.img_reduced = ExtendedImageManipulation.detect_edges(self.img_reduced, n_colors)
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.")
+
+    # def compute_template(self, n_colors):
+    #     self.img_reduced = ExtendedImageManipulation.detect_edges(self.img_reduced, n_colors)
+    #     self.notify_observers((self.img, self.img_reduced, self.canvas))

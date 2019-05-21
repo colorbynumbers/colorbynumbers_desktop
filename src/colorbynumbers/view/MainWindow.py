@@ -77,6 +77,10 @@ class MainWindow(QMainWindow, Observer):
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
 
+    def display_template(self, img_data):
+        self.__clear_scenes()
+        self.__add_image_to_scene(self.scene_template, img_data)
+
     def __clear_scenes(self):
         self.scene_org = QGraphicsScene()
         self.scene_reduced = QGraphicsScene()
@@ -124,3 +128,4 @@ class MainWindow(QMainWindow, Observer):
             self.show_message(update_data)
         else:
             self.display_image(update_data)
+            self.display_template(update_data)

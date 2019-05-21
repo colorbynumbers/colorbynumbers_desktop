@@ -56,3 +56,106 @@ class ExtendedImageManipulation:
             return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=AGGRESSIVE_DE_SPECKLE)))
         else:
             return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=NORMAL_DE_SPECKLE)))
+
+    @staticmethod
+    def detect_edges(image, n_color):
+        print("in detect_edges")
+        npimage = np.asarray(image)
+        newimage = npimage.copy()
+        # print(newimage)
+
+        red = newimage[0, 0, 0]
+        green = newimage[0, 0, 1]
+        blue = newimage[0, 0, 2]
+
+        print(newimage.shape[0])
+        print(newimage.shape[1])
+        print(newimage.shape[2])
+
+        current_red = 0
+        current_green = 0
+        current_blue = 0
+
+        counter = 0
+        border = False
+        newLine = False
+
+        for row in range(newimage.shape[0]):
+            newLine = True
+            for col in range(newimage.shape[1]):
+                if row == 0:
+                    if col == 0:
+                        counter += 1
+                        continue
+                    current_red = newimage[row, col, 0]
+                    current_green = newimage[row, col, 1]
+                    current_blue = newimage[row, col, 2]
+                    if current_red != red or current_green != green or current_blue != blue:
+                        red = current_red
+                        green = current_green
+                        blue = current_blue
+                        newimage[row, col, 0] = 0
+                        newimage[row, col, 1] = 0
+                        newimage[row, col, 2] = 0
+                        border = True
+                    counter += 1
+                    continue
+                else:
+                    if col == 0:
+                        red = newimage[row - 1, col, 0]
+                        green = newimage[row - 1, col, 1]
+                        blue = newimage[row - 1, col, 2]
+                        current_red = newimage[row, col, 0]
+                        current_green = newimage[row, col, 1]
+                        current_blue = newimage[row, col, 2]
+                        if red == 0 and green == 0 and blue == 0:
+                            counter += 1
+                            continue
+                        if current_red != red or current_green != green or current_blue != blue:
+                            red = current_red
+                            green = current_green
+                            blue = current_blue
+                            newimage[row, col, 0] = 0
+                            newimage[row, col, 1] = 0
+                            newimage[row, col, 2] = 0
+                            border = True
+                        counter += 1
+                        continue
+                    else:
+                        current_red = newimage[row, col, 0]
+                        current_green = newimage[row, col, 1]
+                        current_blue = newimage[row, col, 2]
+                        red = newimage[row - 1, col, 0]
+                        green = newimage[row - 1, col, 1]
+                        blue = newimage[row - 1, col, 2]
+                        if current_red != red or current_green != green or current_blue != blue:
+                            if red != 0 and green != 0 and blue != 0:
+                                red = current_red
+                                green = current_green
+                                blue = current_blue
+                                newimage[row, col, 0] = 0
+                                newimage[row, col, 1] = 0
+                                newimage[row, col, 2] = 0
+                                border = True
+                                counter += 1
+                                continue
+                        red = newimage[row, col - 1, 0]
+                        green = newimage[row, col - 1, 1]
+                        blue = newimage[row, col - 1, 2]
+                        if current_red != red or current_green != green or current_blue != blue:
+                            if red != 0 and green != 0 and blue != 0:
+                                red = current_red
+                                green = current_green
+                                blue = current_blue
+                                newimage[row, col, 0] = 0
+                                newimage[row, col, 1] = 0
+                                newimage[row, col, 2] = 0
+                                border = True
+                        counter += 1
+                        continue
+
+        from skimage import color
+        Image.fromarray(newimage).show()
+        newimage = color.lab2rgb(newimage)
+        newimage = ExtendedImage(newimage.fromarray(np.uint8(newimage * 255)))
+        return newimage
