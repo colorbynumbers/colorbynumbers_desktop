@@ -1,6 +1,6 @@
 # Created by Lionel Kornberger at 2019-04-01
-from model.ExtendedImage import ExtendedImage
-from model.ExtendedImageManipulation import ExtendedImageManipulation
+from model.ImageManipulation import ImageManipulation
+from model.Export import export
 from Observable import Observable
 
 
@@ -10,7 +10,7 @@ class Controller(Observable):
         super(Controller, self).__init__()
 
         self.ui = ui
-        self.canvas = canvas
+        self.canvas = None
         self.img = None
         self.img_reduced = None
 
@@ -19,7 +19,8 @@ class Controller(Observable):
     def open_image(self, path):
         try:
             from PIL import Image
-            self.img = ExtendedImage(Image.open(path))
+            self.img = Image.open(path)
+            self.img = ImageManipulation.convert_gray_to_rgb(self.img)
             self.img_reduced = None
             self.notify_observers((self.img, self.img_reduced, self.canvas), tag="image")
         except OSError as err:
@@ -34,16 +35,15 @@ class Controller(Observable):
 
     def compute_canvas(self, n_colors, print_size, min_surface, is_aggressive=False):
         if self.img:
-            self.img_reduced = ExtendedImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
-            self.img_reduced = ExtendedImageManipulation.refine_edge(image=self.img_reduced,
-                                                                     is_aggressive=is_aggressive)
+            self.img_reduced = ImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
+            self.img_reduced = ImageManipulation.refine_edge(image=self.img_reduced,
+                                                             is_aggressive=is_aggressive)
             self.notify_observers((self.img, self.img_reduced, self.canvas), tag="reduced")
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.", tag="message")
 
-    def compute_reduced(self):
-        pass
-
-    def compute_template(self, min_surface):
-        img_detected = ExtendedImageManipulation.detect_edges(self.img_reduced, min_surface)
-        self.notify_observers((self.img, img_detected, self.canvas), tag="template")
+    def export(self, din_format, file_name=""):
+        if self.canvas:
+            export(self.img, din_format, file_name)
+        else:
+            self.notify_observers(str("No Template generated!\nPlease start computation of template first."))

@@ -30,6 +30,8 @@ class MainWindow(QMainWindow, Observer):
         self.ui.toolButtonOpenPhoto.clicked.connect(self.__select_image)
         self.ui.pushButtonStart.clicked.connect(self.__start_computation)
 
+        self.ui.pushButtonExport.clicked.connect(self.__export)
+
         self.installEventFilter(self)
 
     def eventFilter(self, widget, event):
@@ -60,7 +62,7 @@ class MainWindow(QMainWindow, Observer):
 
     @staticmethod
     def __set_file_dialog_options(file_dialog, is_not_native_dialog):
-        file_dialog.setOption(QFileDialog.DontUseNativeDialog, is_not_native_dialog);
+        file_dialog.setOption(QFileDialog.DontUseNativeDialog, is_not_native_dialog)
 
     def __start_computation(self):
         if self.controller:
@@ -70,18 +72,18 @@ class MainWindow(QMainWindow, Observer):
                                            is_aggressive=self.ui.checkBox.isChecked())
             self.controller.compute_template(min_surface=self.ui.spinBoxMinSurfaceSize.value())
 
+    def __export(self):
+
+        file_name = self.open_save_file_dialog() if self.controller.canvas else ""
+        self.controller.export(self.ui.comboBoxPrintSize.currentText(), file_name=file_name)
+
     def display_image(self, img_data):
         self.__clear_scenes()
         self.__add_image_to_scene(self.scene_org, img_data[0])
 
-    def display_reduced(self, img_data):
-        print("yes")
-        if img_data[1] and img_data[2]:
-            print(img_data[1])
-            print("yes")
+        if img_data[1]:
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
-            print("ende")
 
     def display_template(self, img_data):
         print("test")
@@ -123,6 +125,14 @@ class MainWindow(QMainWindow, Observer):
                                                                self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
             self.ui.graphicsViewTemplate.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
                                                           self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
+
+    def open_save_file_dialog(self):
+        file_dialog = QFileDialog()
+        file_name = file_dialog.getSaveFileName(self, 'Save as PDF', " ../../",
+                                                'PDF (*.pdf)',
+                                                '')[0]
+
+        return file_name
 
     @staticmethod
     def show_message(text):

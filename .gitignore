@@ -281,4 +281,7 @@ $RECYCLE.BIN/
 *.png
 *.svg
 
+# PDFs
+*.pdf
+
 # End of https://www.gitignore.io/api/macos,linux,python,pycharm,windows
