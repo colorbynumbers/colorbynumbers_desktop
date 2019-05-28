@@ -191,8 +191,5 @@ class ImageManipulation:
                         counter += 1
                         continue
 
-        from skimage import color
-        Image.fromarray(newimage).show()
-        newimage = color.lab2rgb(newimage)
-        # newimage = ExtendedImage(newimage.fromarray(np.uint8(newimage * 255)))
+        newimage = Image.fromarray(newimage)
         return newimage

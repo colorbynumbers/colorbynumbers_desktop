@@ -73,7 +73,6 @@ class MainWindow(QMainWindow, Observer):
             self.controller.compute_template(min_surface=self.ui.spinBoxMinSurfaceSize.value())
 
     def __export(self):
-
         file_name = self.open_save_file_dialog() if self.controller.canvas else ""
         self.controller.export(self.ui.comboBoxPrintSize.currentText(), file_name=file_name)
 
@@ -81,14 +80,14 @@ class MainWindow(QMainWindow, Observer):
         self.__clear_scenes()
         self.__add_image_to_scene(self.scene_org, img_data[0])
 
+    def display_reduced(self, img_data):
         if img_data[1]:
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
 
     def display_template(self, img_data):
-        print("test")
-        self.__clear_scenes()
-        self.__add_image_to_scene(self.scene_template, img_data)
+        self.__add_image_to_scene(self.scene_template, img_data[1])
+        self.ui.tabWidget.setCurrentIndex(2)
 
     def __clear_scenes(self):
         self.scene_org = QGraphicsScene()
@@ -131,7 +130,6 @@ class MainWindow(QMainWindow, Observer):
         file_name = file_dialog.getSaveFileName(self, 'Save as PDF', " ../../",
                                                 'PDF (*.pdf)',
                                                 '')[0]
-
         return file_name
 
     @staticmethod
@@ -145,6 +143,7 @@ class MainWindow(QMainWindow, Observer):
             self.show_message(update_data)
         elif tag is "image":
             self.display_image(update_data)
-        else:
+        elif tag is "reduced":
             self.display_reduced(update_data)
+        elif tag is "template":
             self.display_template(update_data)

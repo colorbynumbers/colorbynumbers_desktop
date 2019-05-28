@@ -13,7 +13,8 @@ if __name__ == '__main__':
     ui.show()
 
     canvas = Canvas(0, 0)
-    controller = Controller(ui, canvas)
+    canvas_template = Canvas(0, 0)
+    controller = Controller(ui, canvas, canvas_template)
 
     ui.set_controller(controller)
 

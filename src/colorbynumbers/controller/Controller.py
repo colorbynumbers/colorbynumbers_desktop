@@ -6,13 +6,15 @@ from Observable import Observable
 
 class Controller(Observable):
 
-    def __init__(self, ui, canvas):
+    def __init__(self, ui, canvas, canvas_template):
         super(Controller, self).__init__()
 
         self.ui = ui
         self.canvas = None
+        self.canvas_template = None
         self.img = None
         self.img_reduced = None
+        self.img_template = None
 
         self.register_observer(self.ui)
 
@@ -42,8 +44,17 @@ class Controller(Observable):
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.", tag="message")
 
+    def compute_template(self, min_surface):
+        if self.img_reduced:
+            self.img_template = ImageManipulation.detect_edges(image=self.img_reduced, min_surface=min_surface)
+            self.notify_observers((self.img, self.img_template, self.canvas_template), tag="template")
+        else:
+            self.notify_observers("No reduced Photo generated!\nPlease start computation of reduced Photo first.",
+                                  tag="message")
+
     def export(self, din_format, file_name=""):
         if self.canvas:
             export(self.img, din_format, file_name)
         else:
-            self.notify_observers(str("No Template generated!\nPlease start computation of template first."))
+            self.notify_observers(str("No Template generated!\nPlease start computation of template first."),
+                                  tag="message")
