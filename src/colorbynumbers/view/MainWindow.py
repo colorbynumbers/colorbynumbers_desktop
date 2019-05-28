@@ -68,16 +68,23 @@ class MainWindow(QMainWindow, Observer):
                                            print_size=self.ui.comboBoxPrintSize.currentText(),
                                            min_surface=self.ui.spinBoxMinSurfaceSize.value(),
                                            is_aggressive=self.ui.checkBox.isChecked())
+            self.controller.compute_template(min_surface=self.ui.spinBoxMinSurfaceSize.value())
 
     def display_image(self, img_data):
         self.__clear_scenes()
         self.__add_image_to_scene(self.scene_org, img_data[0])
 
+    def display_reduced(self, img_data):
+        print("yes")
         if img_data[1] and img_data[2]:
+            print(img_data[1])
+            print("yes")
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
             self.ui.tabWidget.setCurrentIndex(1)
+            print("ende")
 
     def display_template(self, img_data):
+        print("test")
         self.__clear_scenes()
         self.__add_image_to_scene(self.scene_template, img_data)
 
@@ -123,9 +130,11 @@ class MainWindow(QMainWindow, Observer):
         msgBox.setText(text)
         msgBox.exec_()
 
-    def notify(self, update_data):
+    def notify(self, update_data, tag):
         if isinstance(update_data, str):
             self.show_message(update_data)
-        else:
+        elif tag is "image":
             self.display_image(update_data)
+        else:
+            self.display_reduced(update_data)
             self.display_template(update_data)

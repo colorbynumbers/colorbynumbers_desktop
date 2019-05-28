@@ -57,12 +57,16 @@ class ExtendedImageManipulation:
         else:
             return ExtendedImage(image.filter(ImageFilter.MedianFilter(size=NORMAL_DE_SPECKLE)))
 
+    # Created by Sammy - 2019-05-21
     @staticmethod
-    def detect_edges(image, n_color):
+    def detect_edges(image, min_surface):
         print("in detect_edges")
         npimage = np.asarray(image)
         newimage = npimage.copy()
         # print(newimage)
+
+        flaggedimage = [newimage[0,0,0], False]
+        print(flaggedimage)
 
         red = newimage[0, 0, 0]
         green = newimage[0, 0, 1]
@@ -157,5 +161,5 @@ class ExtendedImageManipulation:
         from skimage import color
         Image.fromarray(newimage).show()
         newimage = color.lab2rgb(newimage)
-        newimage = ExtendedImage(newimage.fromarray(np.uint8(newimage * 255)))
+        #newimage = ExtendedImage(newimage.fromarray(np.uint8(newimage * 255)))
         return newimage
