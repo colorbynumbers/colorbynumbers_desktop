@@ -8,5 +8,5 @@ class Observer(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def notify(self, update_data):
+    def notify(self, update_data, tag):
         pass

@@ -18,6 +18,6 @@ class Observable(object):
         except ValueError:
             print('No such observer in observable')
 
-    def notify_observers(self, update_data):
+    def notify_observers(self, update_data, tag):
         for observer in self.__observers:
-            observer.notify(update_data)
+            observer.notify(update_data, tag)
