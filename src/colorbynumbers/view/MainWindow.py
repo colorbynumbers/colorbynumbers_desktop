@@ -82,6 +82,7 @@ class MainWindow(QMainWindow, Observer):
 
         if img_data[1]:
             self.__add_image_to_scene(self.scene_reduced, img_data[1])
+            self.__add_image_to_scene(self.scene_template, img_data[2])
             self.ui.tabWidget.setCurrentIndex(1)
 
     def __clear_scenes(self):

@@ -1,6 +1,7 @@
 # Created by Lionel Kornberger at 2019-04-12
 import numpy as np
 from PIL import ImageFilter, Image
+from Surface.RecursiveSurfaceHandling import RecursiveSurfaceHandling
 
 ZERO = 0
 ONE = 1
@@ -27,7 +28,7 @@ class ImageManipulation:
         return image
 
     @staticmethod
-    def reduce_colors(image, n_colors):
+    def reduce_colors(image, n_colors, min_surface):
         from skimage import color
         from sklearn.cluster import KMeans
         from sklearn.utils import shuffle
@@ -41,9 +42,15 @@ class ImageManipulation:
         k_means = KMeans(n_clusters=n_colors, random_state=0).fit(image_sample)
         labels = k_means.predict(image)
 
-        image = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width, height, dimension)
+        labels = RecursiveSurfaceHandling().remove_small_areas(labels, width, height, min_surface)
+
+        image, canvas, img_numbers = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width,
+                                                                          height, dimension, )
         image = color.lab2rgb(image)
-        return Image.fromarray(np.uint8(image * 255))
+
+        canvas = Image.fromarray(np.uint8(canvas))
+        canvas.paste(img_numbers, (0, 0), img_numbers)
+        return Image.fromarray(np.uint8(image * 255)), canvas
 
     @staticmethod
     def __scale_image(image):
@@ -53,12 +60,44 @@ class ImageManipulation:
     @staticmethod
     def __recreate_image__(centers, labels, width, height, dimension):
         image = np.zeros((width, height, dimension))
+        canvas = np.zeros((width, height, dimension))
+        canvas.fill(255)
+        from PIL import Image
+
+        img_numbers = Image.new('RGBA', (height, width), (255, 0, 0, 0))
+
         label_idx = 0
         for i in range(width):
             for j in range(height):
                 image[i][j] = centers[labels[label_idx]]
+                write_number = ImageManipulation.__should_write_number(j, i)
+                ImageManipulation.__draw_dot(image, i, j, canvas, write_number)
                 label_idx += 1
-        return image
+        return image, canvas, img_numbers
+
+    @staticmethod
+    def __should_write_number(j, i):
+        return i % 21 == 0
+
+    @staticmethod
+    def __draw_dot(image, i, j, canvas, write_number):
+        if j > 0 and not np.array_equal(image[i][j], image[i][j - 1]):
+
+            canvas[i][j] = np.array([0, 0, 0], dtype=float)
+
+            if j > 10 and write_number:
+
+                enough_room = True
+                for k in range(j, -1, -1):
+                    if not np.array_equal(image[i][j], image[i][k]):
+                        if j - k < 10:
+                            enough_room = False
+                            break
+                        else:
+                            break
+
+        if i > 0 and not np.array_equal(image[i][j], image[i - 1][j]):
+            canvas[i - 1][j] = np.array([0, 0, 0], dtype=float)
 
     @staticmethod
     def __transform_to_2D_np_array__(np_array):

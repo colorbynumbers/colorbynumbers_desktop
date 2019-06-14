@@ -35,7 +35,10 @@ class Controller(Observable):
 
     def compute_canvas(self, n_colors, print_size, min_surface, is_aggressive=False):
         if self.img:
-            self.img_reduced = ImageManipulation.reduce_colors(image=self.img, n_colors=n_colors)
+            self.img_reduced = self.img
+
+            self.img_reduced, self.canvas = ImageManipulation.reduce_colors(image=self.img_reduced, n_colors=n_colors,
+                                                                            min_surface=min_surface)
             self.img_reduced = ImageManipulation.refine_edge(image=self.img_reduced,
                                                              is_aggressive=is_aggressive)
             self.notify_observers((self.img, self.img_reduced, self.canvas))
