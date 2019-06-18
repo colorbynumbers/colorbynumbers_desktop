@@ -22,7 +22,7 @@ class RecursiveSurfaceHandling(SmallSurfaceRemoval):
         return labels_2d
 
 
-    def remove_small_areas(self, labels, width, height, min_surface):
+    def remove_small_areas(self, labels, width, height, min_surface, n_colors):
         global last_visited_x
         global pixel_count
         global counted_pixel_coordinates

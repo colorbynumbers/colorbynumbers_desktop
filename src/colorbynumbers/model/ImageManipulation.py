@@ -1,6 +1,8 @@
 # Created by Lionel Kornberger at 2019-04-12
 import numpy as np
 from PIL import ImageFilter, Image
+
+from Surface.IterativeSurfaceHandling import IterativeSurfaceHandling
 from Surface.RecursiveSurfaceHandling import RecursiveSurfaceHandling
 
 ZERO = 0

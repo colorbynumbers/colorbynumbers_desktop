@@ -5,5 +5,5 @@ import abc
 
 class SmallSurfaceRemoval(abc.ABC):
     @abc.abstractmethod
-    def remove_small_areas(self, labels, width, height, min_surface):
+    def remove_small_areas(self, labels, width, height, min_surface, n_colors):
         pass
