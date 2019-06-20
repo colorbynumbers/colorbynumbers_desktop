@@ -8,8 +8,8 @@ from Surface.RecursiveSurfaceHandling import RecursiveSurfaceHandling
 ZERO = 0
 ONE = 1
 
-AGGRESSIVE_DE_SPECKLE: int = 11
-NORMAL_DE_SPECKLE: int = 5
+AGGRESSIVE_DE_SPECKLE: int = 15
+NORMAL_DE_SPECKLE: int = 7
 
 DIN_SIZE = {
     "DIN A1": (7016, 9933),
@@ -44,7 +44,7 @@ class ImageManipulation:
         k_means = KMeans(n_clusters=n_colors, random_state=0).fit(image_sample)
         labels = k_means.predict(image)
 
-        labels = RecursiveSurfaceHandling().remove_small_areas(labels, width, height, min_surface)
+        labels = IterativeSurfaceHandling().remove_small_areas(labels, width, height, min_surface, n_colors)
 
         image, canvas, img_numbers = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width,
                                                                           height, dimension, )
