@@ -35,7 +35,7 @@ class IterativeSurfaceHandling(SmallSurfaceRemoval):
             IterativeSurfaceHandling.labels_2d,
             width, height, min_surface,
             surface_dict)
-        return np.reshape(IterativeSurfaceHandling.labels_2d, width * height)
+        return np.reshape(IterativeSurfaceHandling.labels_2d, width * height), surface_dict
 
     def determine_surface(self, labels, width, height, min_surface, n_colors):
         IterativeSurfaceHandling.labels_2d = np.reshape(labels, (width, height))
@@ -59,7 +59,7 @@ class IterativeSurfaceHandling(SmallSurfaceRemoval):
                         if (row_number - 1) in surface_dict[label]:
                             for surface_above in surface_dict[label][(row_number - 1)]:
                                 if surface_above.surface_set:
-                                    if not neighbours.isdisjoint(surface_above.get_set()):
+                                    if not neighbours.isdisjoint(surface_above.surface_set):
                                         merge_list.append(surface_above)
 
                             if merge_list:
@@ -73,14 +73,40 @@ class IterativeSurfaceHandling(SmallSurfaceRemoval):
         return surface_dict
 
     def replace_labels_in_small_areas(self, labels_2d, width, height, min_surface, surface_dict):
+
+        self.merge_smaller_surfaces(surface_dict, min_surface)
+
         for label, label_dict in surface_dict.items():
-            for key, surface_list in label_dict.items():
-                for surface in surface_list:
-                    if surface.get_surface_size() < min_surface * 4:
-                        for pixel in surface.surface_set:
-                            labels_2d[pixel[0]][pixel[1]] = surface.neighbour.neighbour_label
+            for row_number, row in label_dict.items():
+                for surface in row:
+                    for point in surface.surface_set:
+                        labels_2d[point[0]][point[1]] = label
 
         return labels_2d, surface_dict
+
+    def merge_smaller_surfaces(self, surface_dict, min_surface):
+        not_all_surfaces_are_big_enough = True
+
+        while not_all_surfaces_are_big_enough:
+            surface_big_enough = True
+            for label, label_dict in surface_dict.items():
+                for key, surface_list in label_dict.items():
+                    remove_list = []
+                    for surface in surface_list:
+                        if surface.get_surface_size() < min_surface:
+                            surface_big_enough = False
+                            new_label, row, index = self.get_neighbour_surface_row_index(surface.neighbour,
+                                                                                         surface_dict)
+                            surface_dict[new_label][row][index].set_set(
+                                set.union(surface_dict[new_label][row][index].surface_set,
+                                          surface.surface_set))
+                            remove_list.append((label, key, surface))
+                    # Todo maybe delete surface directly instead of append it to a list
+                    for item in remove_list:
+                        surface_dict[item[0]][item[1]].remove(item[2])
+            if surface_big_enough:
+                not_all_surfaces_are_big_enough = False
+        return surface_dict
 
     # group elements of same label in the same row that are neighbours together
     @staticmethod
@@ -129,3 +155,14 @@ class IterativeSurfaceHandling(SmallSurfaceRemoval):
                 own_index = index
 
         return surface_dict
+
+    def get_neighbour_surface_row_index(self, neighbour, surface_dict):
+        for row_number, surface_list in surface_dict[neighbour.neighbour_label].items():
+            for list_index, surface in enumerate(surface_list):
+                if surface.contains_coordinate(neighbour.index):
+                    return neighbour.neighbour_label, row_number, list_index
+        for label, label_list in surface_dict.items():
+            for row_number, row in label_list.items():
+                for list_index, surface in enumerate(row):
+                    if surface.contains_coordinate(neighbour.index):
+                        return label, row_number, list_index

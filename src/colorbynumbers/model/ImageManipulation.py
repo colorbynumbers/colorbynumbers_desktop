@@ -3,7 +3,6 @@ import numpy as np
 from PIL import ImageFilter, Image
 
 from Surface.IterativeSurfaceHandling import IterativeSurfaceHandling
-from Surface.RecursiveSurfaceHandling import RecursiveSurfaceHandling
 
 ZERO = 0
 ONE = 1
@@ -35,8 +34,6 @@ class ImageManipulation:
         from sklearn.cluster import KMeans
         from sklearn.utils import shuffle
 
-        ImageManipulation.__scale_image(image)
-
         image = color.rgb2lab(image)
         width, height, dimension, image = ImageManipulation.__transform_to_2D_np_array__(image)
 
@@ -44,7 +41,8 @@ class ImageManipulation:
         k_means = KMeans(n_clusters=n_colors, random_state=0).fit(image_sample)
         labels = k_means.predict(image)
 
-        labels = IterativeSurfaceHandling().remove_small_areas(labels, width, height, min_surface, n_colors)
+        labels, surface_dict = IterativeSurfaceHandling().remove_small_areas(labels, width, height, min_surface,
+                                                                             n_colors)
 
         image, canvas, img_numbers = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width,
                                                                           height, dimension, )
@@ -110,6 +108,9 @@ class ImageManipulation:
 
     @staticmethod
     def refine_edge(image, is_aggressive):
+
+        ImageManipulation.__scale_image(image)
+
         if is_aggressive:
             return image.filter(ImageFilter.MedianFilter(size=AGGRESSIVE_DE_SPECKLE))
         else:

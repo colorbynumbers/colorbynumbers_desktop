@@ -11,7 +11,8 @@ class Surface():
             self.neighbour_index = neighbour_index
 
     surface_set = {}
-    neighbour = Neighbour(-1, (-1,-1), -1)
+    neighbour = Neighbour(-1,(-1,-1),-1)
+    center = (-1,-1)
 
     def __init__(self, *args, **kwargs):
         if args:
@@ -22,6 +23,16 @@ class Surface():
 
     def add(self, tuple):
         self.surface_set.add(tuple)
+
+    def compute_center(self):
+        max = self.max()
+        min = self.min()
+        mean_y = int((max[0] + min[0])/2)
+        mean_x = int((max[1] + min[1])/2)
+        return (mean_y,mean_x)
+
+    def contains_coordinate(self, index):
+        return not self.surface_set.isdisjoint({index})
 
     def min(self):
         return min(self.surface_set)
@@ -37,6 +48,9 @@ class Surface():
 
     def set_set(self, set):
         self.surface_set = set
+
+    def set_center(self, tuple):
+        self.center = tuple
 
     def set_neighbour(self, neighbour_label, row, neighbour_index):
         self.neighbour = Surface.Neighbour(neighbour_label, row, neighbour_index)
