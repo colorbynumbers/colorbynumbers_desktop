@@ -1,6 +1,6 @@
 # Created by Lionel Kornberger at 2019-04-12
 import numpy as np
-from PIL import ImageFilter, Image
+from PIL import ImageFilter, Image, ImageDraw, ImageFont
 
 from Surface.IterativeSurfaceHandling import IterativeSurfaceHandling
 
@@ -41,11 +41,11 @@ class ImageManipulation:
         k_means = KMeans(n_clusters=n_colors, random_state=0).fit(image_sample)
         labels = k_means.predict(image)
 
-        labels, surface_dict = IterativeSurfaceHandling().remove_small_areas(labels, width, height, min_surface,
-                                                                             n_colors)
+        labels, surface_center_dict = IterativeSurfaceHandling().remove_small_areas(labels, width, height, min_surface,
+                                                                                    n_colors)
 
         image, canvas, img_numbers = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width,
-                                                                          height, dimension, )
+                                                                          height, dimension, surface_center_dict)
         image = color.lab2rgb(image)
 
         canvas = Image.fromarray(np.uint8(canvas))
@@ -53,12 +53,14 @@ class ImageManipulation:
         return Image.fromarray(np.uint8(image * 255)), canvas
 
     @staticmethod
-    def __scale_image(image):
-        size = 2200, 2200
-        image.thumbnail(size, Image.ANTIALIAS)
+    def scale_image(image):
+        width = 1200
+        factor = (width / float(image.size[0]))
+        height = int((float(image.size[1]) * float(factor)))
+        return image.resize((width, height))
 
     @staticmethod
-    def __recreate_image__(centers, labels, width, height, dimension):
+    def __recreate_image__(centers, labels, width, height, dimension, surface_center_dict):
         image = np.zeros((width, height, dimension))
         canvas = np.zeros((width, height, dimension))
         canvas.fill(255)
@@ -70,34 +72,40 @@ class ImageManipulation:
         for i in range(width):
             for j in range(height):
                 image[i][j] = centers[labels[label_idx]]
-                write_number = ImageManipulation.__should_write_number(j, i)
-                ImageManipulation.__draw_dot(image, i, j, canvas, write_number)
+                ImageManipulation.__draw_dot(image, i, j, canvas)
+                ImageManipulation.__draw_number(img_numbers, i, j, image, surface_center_dict)
                 label_idx += 1
         return image, canvas, img_numbers
 
     @staticmethod
-    def __should_write_number(j, i):
-        return i % 21 == 0
-
-    @staticmethod
-    def __draw_dot(image, i, j, canvas, write_number):
+    def __draw_dot(image, i, j, canvas):
         if j > 0 and not np.array_equal(image[i][j], image[i][j - 1]):
-
             canvas[i][j] = np.array([0, 0, 0], dtype=float)
-
-            if j > 10 and write_number:
-
-                enough_room = True
-                for k in range(j, -1, -1):
-                    if not np.array_equal(image[i][j], image[i][k]):
-                        if j - k < 10:
-                            enough_room = False
-                            break
-                        else:
-                            break
 
         if i > 0 and not np.array_equal(image[i][j], image[i - 1][j]):
             canvas[i - 1][j] = np.array([0, 0, 0], dtype=float)
+
+    @classmethod
+    def __draw_number(cls, img_numbers, i, j, image, surface_center_dict):
+
+        if str(i) + " " + str(j) in surface_center_dict:
+
+            # if j > 13:
+            #     enough_room = True
+            #     for k in range(j, -1, -1):
+            #         if not np.array_equal(image[i][j], image[i][k]):
+            #             if j - k < 13:
+            #                 enough_room = False
+            #                 break
+            #             else:
+            #                 break
+            #     if enough_room:
+            '../../resources/SourceSerifPro-Regular.ttf'
+            draw = ImageDraw.Draw(img_numbers)
+            # font = ImageFont.truetype(<font-file>, <font-size>)
+            font = ImageFont.truetype("../../resources/SourceSerifPro-Regular.ttf", 18)
+            # draw.text((x, y),"Sample Text",(r,g,b))
+            draw.text((j, i), str(surface_center_dict[str(i) + " " + str(j)]), (0, 0, 0), font=font)
 
     @staticmethod
     def __transform_to_2D_np_array__(np_array):
@@ -108,8 +116,6 @@ class ImageManipulation:
 
     @staticmethod
     def refine_edge(image, is_aggressive):
-
-        ImageManipulation.__scale_image(image)
 
         if is_aggressive:
             return image.filter(ImageFilter.MedianFilter(size=AGGRESSIVE_DE_SPECKLE))
