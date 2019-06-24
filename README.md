@@ -1,11 +1,8 @@
 # Color by numbers
 
-----
 ## A project from two students from the university of applied sciences(HTWG) in constance.
 
-Everyone knows color by numbers and poeple of all ages love to color. It relaxed. So the idea of this project is to make an individual color-by-number photo your choice. 
-
-This program computes a painting-by-numbers template from pictures or photos. Your calculated painting template is then displayed and ready for export.
+This program computes a painting-by-numbers template from pictures your choice.
 
 
 ## How to use
@@ -13,7 +10,8 @@ This program computes a painting-by-numbers template from pictures or photos. Yo
 1. Start the program.   
 2. Browse a picture or photo of your choice.   
 3. Makes some configurations and press start.   
-4. Press export and print it. :sparkles:magic:sparkles:  
+    :sparkles:magic:sparkles: 
+4. Press export and print it.   
 5. Color your photo and enjoy! :smile:   
 
 
