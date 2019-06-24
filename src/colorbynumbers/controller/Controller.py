@@ -6,13 +6,14 @@ from Observable import Observable
 
 class Controller(Observable):
 
-    def __init__(self, ui, canvas):
+    def __init__(self, ui):
         super(Controller, self).__init__()
 
         self.ui = ui
         self.canvas = None
         self.img = None
         self.img_reduced = None
+        self.img_colors = None
 
         self.register_observer(self.ui)
 
@@ -33,7 +34,7 @@ class Controller(Observable):
         else:
             return 0, 0
 
-    def compute_canvas(self, n_colors, print_size, min_surface, is_aggressive=False):
+    def compute_canvas(self, n_colors, min_surface, is_aggressive=False):
         if self.img:
             self.img = ImageManipulation.scale_image(self.img)
 
@@ -41,14 +42,15 @@ class Controller(Observable):
 
             self.img_reduced = ImageManipulation.refine_edge(image=self.img_reduced,
                                                              is_aggressive=is_aggressive)
-            self.img_reduced, self.canvas = ImageManipulation.reduce_colors(image=self.img_reduced, n_colors=n_colors,
-                                                                            min_surface=min_surface)
+            self.img_reduced, self.canvas, self.img_colors = ImageManipulation.reduce_colors(image=self.img_reduced,
+                                                                                             n_colors=n_colors,
+                                                                                             min_surface=min_surface)
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.")
 
     def export(self, din_format, file_name=""):
         if self.canvas:
-            export(self.img, din_format, file_name)
+            export(self.img_reduced, self.canvas, self.img_colors, din_format, file_name)
         else:
             self.notify_observers(str("No Template generated!\nPlease start computation of template first."))

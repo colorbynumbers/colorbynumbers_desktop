@@ -46,11 +46,22 @@ class ImageManipulation:
 
         image, canvas, img_numbers = ImageManipulation.__recreate_image__(k_means.cluster_centers_, labels, width,
                                                                           height, dimension, surface_center_dict)
-        image = color.lab2rgb(image)
+        image_colors = ImageManipulation.get_color_info(k_means.cluster_centers_)
+
+        print("hurra")
 
         canvas = Image.fromarray(np.uint8(canvas))
         canvas.paste(img_numbers, (0, 0), img_numbers)
-        return Image.fromarray(np.uint8(image * 255)), canvas
+        image = color.lab2rgb(image)
+        return Image.fromarray(np.uint8(image * 255)), canvas, image_colors
+        return Image.fromarray(np.uint8(image * 255)), Image.fromarray(np.uint8(image * 255)), image_colors
+
+    @staticmethod
+    def get_color_info(cluster_center):
+        from skimage import color
+        image_colors = cluster_center.reshape(cluster_center.shape[0], 1, 3)
+        image_colors = color.lab2rgb(image_colors)
+        return np.uint8(image_colors * 255)
 
     @staticmethod
     def scale_image(image):
@@ -89,7 +100,6 @@ class ImageManipulation:
     def __draw_number(cls, img_numbers, i, j, image, surface_center_dict):
 
         if str(i) + " " + str(j) in surface_center_dict:
-
             # if j > 13:
             #     enough_room = True
             #     for k in range(j, -1, -1):
@@ -137,3 +147,27 @@ class ImageManipulation:
     def get_size_indicies(image):
         width, height = (ONE, ZERO) if ImageManipulation.is_landscape(image) else (ZERO, ONE)
         return width, height
+
+    @staticmethod
+    def draw_rectangle_on_image(image, point_1, point_2, fill_color):
+
+
+        # TODO split image in rectangles (x,y) coodinates for drawing the rectangles and the numbers
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((point_1,point_2), fill=fill_color, outline="black", width=5)
+
+        return image
+
+    @staticmethod
+    def calculate_rectangle_points(point, width, height):
+        return point, (point[0]+width,point[1]+height)
+
+    @staticmethod
+    def draw_text_on_image(image, text, point, font_size):
+        '../../resources/SourceSerifPro-Regular.ttf'
+        draw = ImageDraw.Draw(image)
+        # font = ImageFont.truetype(<font-file>, <font-size>)
+        font = ImageFont.truetype("../../resources/SourceSerifPro-Regular.ttf", font_size)
+        # draw.text((x, y),"Sample Text",(r,g,b))
+        draw.text(point, text, (0, 0, 0), font=font)
+        return image
