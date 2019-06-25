@@ -75,6 +75,7 @@ class MainWindow(QMainWindow, Observer):
                                          self.ui.comboBoxPrintSize.currentText(),
                                          self.ui.spinBoxMinSurfaceSize.value(),
                                          self.ui.checkBox.isChecked(), self.controller)  # no parent!
+            self.controller.register_observer(worker)
             self.thread = QThread()
             worker.moveToThread(self.thread)
             worker.finished.connect(self.thread.quit)
@@ -170,15 +171,16 @@ class MainWindow(QMainWindow, Observer):
 
     def notify(self, update_data):
         self.computation_started = False
+        self.__disable_ui(False)
         if isinstance(update_data, str):
             self.show_message(update_data)
         else:
             self.display_image(update_data)
-        self.__disable_ui(False)
 
 
-class ComputeCanvasWorker(QObject):
+class ComputeCanvasWorker(QObject, Observer):
     finished = Signal()
+    images_computed = Signal(object)
 
     def __init__(self, n_colors, print_size, min_surface, is_aggressive, controller):
         QObject.__init__(self)
@@ -193,3 +195,6 @@ class ComputeCanvasWorker(QObject):
                                        min_surface=self.min_surface,
                                        is_aggressive=self.is_aggressive)
         self.finished.emit()
+
+    def notify(self, update_data):
+        self.images_computed.emit(update_data)
