@@ -1,8 +1,8 @@
 # Created by Lionel Kornberger at 2019-04-07
 
-from PySide2.QtWidgets import QMainWindow, QGraphicsScene, QFileDialog, QMessageBox, QWidget
+from PySide2.QtWidgets import QMainWindow, QGraphicsScene, QFileDialog, QMessageBox, QWidget, QGraphicsTextItem
 from PySide2.QtGui import QImage, QPixmap
-from PySide2.QtCore import QRectF, Signal, Qt, QEvent
+from PySide2.QtCore import QRectF, Signal, Qt, QEvent, QThread, QObject
 from Observer import Observer
 from view.ui_mainwindow import Ui_MainWindow
 from Config import get_config
@@ -23,6 +23,8 @@ class MainWindow(QMainWindow, Observer):
 
         self.controller = None
 
+        self.computation_started = False
+
         # slots
         self.resized.connect(self.resize_image)
         self.ui.tabWidget.currentChanged.connect(self.resize_image)
@@ -37,9 +39,9 @@ class MainWindow(QMainWindow, Observer):
     def eventFilter(self, widget, event):
         if event.type() == QEvent.KeyPress:
             key = event.key()
-            if key == Qt.Key_Return:
+            if key == Qt.Key_Return and not self.computation_started:
                 self.__start_computation()
-            elif key == Qt.Key_Enter:
+            elif key == Qt.Key_Enter and not self.computation_started:
                 self.__start_computation()
             return True
         return QWidget.eventFilter(self, widget, event)
@@ -66,10 +68,18 @@ class MainWindow(QMainWindow, Observer):
 
     def __start_computation(self):
         if self.controller:
-            self.controller.compute_canvas(n_colors=self.ui.spinBoxNumberOfColors.value(),
-                                           print_size=self.ui.comboBoxPrintSize.currentText(),
-                                           min_surface=self.ui.spinBoxMinSurfaceSize.value(),
-                                           is_aggressive=self.ui.checkBox.isChecked())
+            self.__disable_ui(True)
+            self.__set_computation_text()
+
+            worker = ComputeCanvasWorker(self.ui.spinBoxNumberOfColors.value(),
+                                         self.ui.comboBoxPrintSize.currentText(),
+                                         self.ui.spinBoxMinSurfaceSize.value(),
+                                         self.ui.checkBox.isChecked(), self.controller)  # no parent!
+            self.thread = QThread()
+            worker.moveToThread(self.thread)
+            worker.finished.connect(self.thread.quit)
+            self.thread.started.connect(worker.run)
+            self.thread.start()
 
     def __export(self):
 
@@ -85,6 +95,14 @@ class MainWindow(QMainWindow, Observer):
             self.__add_image_to_scene(self.scene_template, img_data[2])
             self.ui.tabWidget.setCurrentIndex(1)
 
+    def __set_computation_text(self):
+        self.scene_org = QGraphicsScene()
+        self.scene_org.addText("It'll take a moment.")
+        self.ui.graphicsViewOriginal.setScene(self.scene_org)
+        self.ui.tabWidget.setCurrentIndex(0)
+        self.computation_started = True
+        self.resize_image()
+
     def __clear_scenes(self):
         self.scene_org = QGraphicsScene()
         self.scene_reduced = QGraphicsScene()
@@ -92,6 +110,16 @@ class MainWindow(QMainWindow, Observer):
         self.ui.graphicsViewOriginal.setScene(self.scene_org)
         self.ui.graphicsViewReducedColors.setScene(self.scene_reduced)
         self.ui.graphicsViewTemplate.setScene(self.scene_template)
+
+    def __disable_ui(self, boolean):
+        self.ui.pushButtonStart.setDisabled(boolean)
+        self.ui.pushButtonExport.setDisabled(boolean)
+        self.ui.toolButtonOpenPhoto.setDisabled(boolean)
+        self.ui.spinBoxNumberOfColors.setDisabled(boolean)
+        self.ui.spinBoxMinSurfaceSize.setDisabled(boolean)
+        self.ui.comboBoxPrintSize.setDisabled(boolean)
+        self.ui.checkBox.setDisabled(boolean)
+        self.ui.tabWidget.setDisabled(boolean)
 
     def __add_image_to_scene(self, scene, image):
         pixmap = self.__pil_to_pixmap(image)
@@ -114,12 +142,17 @@ class MainWindow(QMainWindow, Observer):
 
     def resize_image(self):
         if self.controller:
-            self.ui.graphicsViewOriginal.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
-                                                          self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
-            self.ui.graphicsViewReducedColors.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
-                                                               self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
-            self.ui.graphicsViewTemplate.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
-                                                          self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
+            if self.computation_started:
+                self.ui.graphicsViewOriginal.fitInView(QRectF(0, 0, self.scene_org.width(), self.scene_org.height()),
+                                                       Qt.KeepAspectRatio)
+            else:
+                self.ui.graphicsViewOriginal.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
+                                                              self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
+                self.ui.graphicsViewReducedColors.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
+                                                                   self.controller.get_image_size()[1]),
+                                                            Qt.KeepAspectRatio)
+                self.ui.graphicsViewTemplate.fitInView(QRectF(0, 0, self.controller.get_image_size()[0],
+                                                              self.controller.get_image_size()[1]), Qt.KeepAspectRatio)
 
     def open_save_file_dialog(self):
         file_dialog = QFileDialog()
@@ -136,7 +169,27 @@ class MainWindow(QMainWindow, Observer):
         msgBox.exec_()
 
     def notify(self, update_data):
+        self.computation_started = False
         if isinstance(update_data, str):
             self.show_message(update_data)
         else:
             self.display_image(update_data)
+        self.__disable_ui(False)
+
+
+class ComputeCanvasWorker(QObject):
+    finished = Signal()
+
+    def __init__(self, n_colors, print_size, min_surface, is_aggressive, controller):
+        QObject.__init__(self)
+        self.n_colors = n_colors
+        self.print_size = print_size
+        self.min_surface = min_surface
+        self.is_aggressive = is_aggressive
+        self.controller = controller
+
+    def run(self):
+        self.controller.compute_canvas(n_colors=self.n_colors,
+                                       min_surface=self.min_surface,
+                                       is_aggressive=self.is_aggressive)
+        self.finished.emit()
