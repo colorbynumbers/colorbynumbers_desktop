@@ -11,6 +11,7 @@ class Controller(Observable):
 
         self.ui = ui
         self.canvas = None
+        self.canvas_with_numbers = None
         self.img = None
         self.img_reduced = None
         self.img_colors = None
@@ -42,15 +43,16 @@ class Controller(Observable):
 
             self.img_reduced = ImageManipulation.refine_edge(image=self.img_reduced,
                                                              is_aggressive=is_aggressive)
-            self.img_reduced, self.canvas, self.img_colors = ImageManipulation.reduce_colors(image=self.img_reduced,
-                                                                                             n_colors=n_colors,
-                                                                                             min_surface=min_surface)
+            self.img_reduced, self.canvas, self.canvas_with_numbers, self.img_colors = ImageManipulation.reduce_colors(
+                image=self.img_reduced,
+                n_colors=n_colors,
+                min_surface=min_surface)
             self.notify_observers((self.img, self.img_reduced, self.canvas))
         else:
             self.notify_observers("No Photo opened!\nPlease open a photo first.")
 
     def export(self, din_format, file_name=""):
         if self.canvas:
-            export(self.img_reduced, self.canvas, self.img_colors, din_format, file_name)
+            export(self.img_reduced, self.canvas, self.canvas_with_numbers, self.img_colors, din_format, file_name)
         else:
             self.notify_observers(str("No Template generated!\nPlease start computation of template first."))

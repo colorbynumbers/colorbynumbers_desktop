@@ -65,12 +65,15 @@ def create_color_ref_images(colors_arr, din_format, template_image):
     return img_colors
 
 
-def export(reduced_image, template_image, colors_arr, din_format, file_name):
+def export(reduced_image, template_image, template_with_numbers_image,colors_arr, din_format, file_name):
     temp_file_reduced_image = NamedTemporaryFile(suffix='.png')  # this is a file object
     reduced_image.save(temp_file_reduced_image.name, format="png")  # save the content to temp
 
     temp_file_template_image = NamedTemporaryFile(suffix='.png')  # this is a file object
     template_image.save(temp_file_template_image.name, format="png")  # save the content to temp
+
+    temp_file_template_With_numbers_image = NamedTemporaryFile(suffix='.png')  # this is a file object
+    template_with_numbers_image.save(temp_file_template_With_numbers_image.name, format="png")  # save the content to temp
 
     colors_image = create_color_ref_images(colors_arr, din_format, template_image)
     temp_files_colors_image = []
@@ -83,11 +86,12 @@ def export(reduced_image, template_image, colors_arr, din_format, file_name):
     layout_fun = img2pdf.get_layout_fun(din_input)
 
     with open(file_name, "wb") as f:
-        f.write(img2pdf.convert(temp_file_reduced_image.name, temp_file_template_image, *temp_files_colors_image,
+        f.write(img2pdf.convert(temp_file_reduced_image.name, temp_file_template_image, temp_file_template_With_numbers_image,*temp_files_colors_image,
                                 layout_fun=layout_fun))
 
     temp_file_reduced_image.close()
     temp_file_template_image.close()
+    template_with_numbers_image.close()
     for temp_file in temp_files_colors_image:
         temp_file.close()
 

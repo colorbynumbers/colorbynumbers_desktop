@@ -51,10 +51,10 @@ class ImageManipulation:
         print("hurra")
 
         canvas = Image.fromarray(np.uint8(canvas))
-        canvas.paste(img_numbers, (0, 0), img_numbers)
+        canvas_with_numbers = canvas.copy()
+        canvas_with_numbers.paste(img_numbers, (0, 0), img_numbers)
         image = color.lab2rgb(image)
-        return Image.fromarray(np.uint8(image * 255)), canvas, image_colors
-        return Image.fromarray(np.uint8(image * 255)), Image.fromarray(np.uint8(image * 255)), image_colors
+        return Image.fromarray(np.uint8(image * 255)), canvas, canvas_with_numbers,image_colors
 
     @staticmethod
     def get_color_info(cluster_center):
