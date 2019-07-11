@@ -116,6 +116,7 @@ class IterativeSurfaceHandling(SmallSurfaceRemoval):
                                 surface_dict[new_label][row][index].set_set(
                                     set.union(surface_dict[new_label][row][index].surface_set,
                                               surface.surface_set))
+                                surface_dict[new_label][row][index].set_merged(True)
                                 remove_list.append((label, key, surface))
 
                         for item in remove_list:
@@ -124,10 +125,10 @@ class IterativeSurfaceHandling(SmallSurfaceRemoval):
             if surface_big_enough:
                 for label_2, label_dict_2 in surface_dict.items():
                     for key_2, surface_list_2 in label_dict_2.items():
-
                         for surface_2 in surface_list_2:
-                            center = surface_2.compute_center()
-                            surface_center_dict[str(center[0]) + " " + str(center[1])] = label_2
+                            if not surface_2.merged:
+                                center = surface_2.compute_center()
+                                surface_center_dict[str(center[0]) + " " + str(center[1])] = label_2
                 not_all_surfaces_are_big_enough = False
         return surface_center_dict, surface_dict
 

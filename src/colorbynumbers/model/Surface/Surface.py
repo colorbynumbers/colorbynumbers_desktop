@@ -16,6 +16,7 @@ class Surface():
 
     surface_set = {}
     neighbour = Neighbour(-1, (-1, -1), -1)
+    merged = False
 
     def __init__(self, *args, **kwargs):
         if args:
@@ -50,6 +51,9 @@ class Surface():
 
     def get_surface_size(self):
         return len(self.surface_set)
+
+    def set_merged(self, boolean):
+        self.merged = boolean
 
     def set_set(self, set):
         self.surface_set = set

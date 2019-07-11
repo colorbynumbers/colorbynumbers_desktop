@@ -54,7 +54,7 @@ class ImageManipulation:
         canvas_with_numbers = canvas.copy()
         canvas_with_numbers.paste(img_numbers, (0, 0), img_numbers)
         image = color.lab2rgb(image)
-        return Image.fromarray(np.uint8(image * 255)), canvas, canvas_with_numbers,image_colors
+        return Image.fromarray(np.uint8(image * 255)), canvas, canvas_with_numbers, image_colors
 
     @staticmethod
     def get_color_info(cluster_center):
@@ -84,7 +84,7 @@ class ImageManipulation:
             for j in range(height):
                 image[i][j] = centers[labels[label_idx]]
                 ImageManipulation.__draw_dot(image, i, j, canvas)
-                ImageManipulation.__draw_number(img_numbers, i, j, image, surface_center_dict)
+                ImageManipulation.__draw_number(img_numbers, i, j, image, surface_center_dict, labels, width, height)
                 label_idx += 1
         return image, canvas, img_numbers
 
@@ -97,25 +97,24 @@ class ImageManipulation:
             canvas[i - 1][j] = np.array([0, 0, 0], dtype=float)
 
     @classmethod
-    def __draw_number(cls, img_numbers, i, j, image, surface_center_dict):
+    def __draw_number(cls, img_numbers, i, j, image, surface_center_dict, labels, width, height):
+        gap = 4
+        labels_2d = np.reshape(labels, (width, height))
 
         if str(i) + " " + str(j) in surface_center_dict:
-            # if j > 13:
-            #     enough_room = True
-            #     for k in range(j, -1, -1):
-            #         if not np.array_equal(image[i][j], image[i][k]):
-            #             if j - k < 13:
-            #                 enough_room = False
-            #                 break
-            #             else:
-            #                 break
-            #     if enough_room:
-            '../../resources/SourceSerifPro-Regular.ttf'
-            draw = ImageDraw.Draw(img_numbers)
-            # font = ImageFont.truetype(<font-file>, <font-size>)
-            font = ImageFont.truetype("../../resources/SourceSerifPro-Regular.ttf", 18)
-            # draw.text((x, y),"Sample Text",(r,g,b))
-            draw.text((j, i), str(surface_center_dict[str(i) + " " + str(j)]), (0, 0, 0), font=font)
+            if j > gap and i > gap and i < width - gap and j < height - gap:
+                enough_room = True
+                if not np.array_equal(labels_2d[i][j], labels_2d[i+gap][j+gap]) or not np.array_equal(labels_2d[i][j],labels_2d[i-gap][j+gap]) or not np.array_equal(labels_2d[i][j],labels_2d[i+gap][j-gap]):
+                    enough_room = False
+                if enough_room:
+                    '../../resources/SourceSerifPro-Regular.ttf'
+                    draw = ImageDraw.Draw(img_numbers)
+                    # font = ImageFont.truetype(<font-file>, <font-size>)
+                    font = ImageFont.truetype("../../resources/SourceSerifPro-Regular.ttf", 12,
+                                              layout_engine=ImageFont.LAYOUT_RAQM)
+                    # draw.text((x, y),"Sample Text",(r,g,b))
+                    draw.text((j, i), str(surface_center_dict[str(i) + " " + str(j)]), fill=(0, 0, 0), font=font,
+                              anchor=(j, i))
 
     @staticmethod
     def __transform_to_2D_np_array__(np_array):
@@ -151,16 +150,15 @@ class ImageManipulation:
     @staticmethod
     def draw_rectangle_on_image(image, point_1, point_2, fill_color):
 
-
         # TODO split image in rectangles (x,y) coodinates for drawing the rectangles and the numbers
         draw = ImageDraw.Draw(image)
-        draw.rectangle((point_1,point_2), fill=fill_color, outline="black", width=5)
+        draw.rectangle((point_1, point_2), fill=fill_color, outline="black", width=5)
 
         return image
 
     @staticmethod
     def calculate_rectangle_points(point, width, height):
-        return point, (point[0]+width,point[1]+height)
+        return point, (point[0] + width, point[1] + height)
 
     @staticmethod
     def draw_text_on_image(image, text, point, font_size):
