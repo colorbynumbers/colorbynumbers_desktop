@@ -2,7 +2,7 @@
 import numpy as np
 from PIL import ImageFilter, Image, ImageDraw, ImageFont
 
-from Surface.IterativeSurfaceHandling import IterativeSurfaceHandling
+from model.Surface.IterativeSurfaceHandling import IterativeSurfaceHandling
 
 ZERO = 0
 ONE = 1

@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from Surface.SmallSurfaceRemoval import SmallSurfaceRemoval
-from Surface.Surface import Surface
+from model.Surface.SmallSurfaceRemoval import SmallSurfaceRemoval
+from model.Surface.Surface import Surface
 
 
 def create_neighbour_for_surface_in_row(surface, length):

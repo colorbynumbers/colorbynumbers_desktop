@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from Surface.SmallSurfaceRemoval import SmallSurfaceRemoval
+from model.Surface.SmallSurfaceRemoval import SmallSurfaceRemoval
 
 
 class RecursiveSurfaceHandling(SmallSurfaceRemoval):
