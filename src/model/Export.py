@@ -15,10 +15,10 @@ ROWS_AND_COLUMNS = (5, 7)
 
 
 def create_color_ref_images(colors_arr, din_format, template_image):
-    from src.model import ImageManipulation, DIN_SIZE
+    from src.model.ImageManipulation import ImageManipulation, DIN_SIZE
 
     din_in_pixel = DIN_SIZE["DIN A4"]
-    width, height = ImageManipulation.get_size_indicies(template_image)
+    width, height = ImageManipulation.get_size_indices(template_image)
     width_for_color = din_in_pixel[width] / ROWS_AND_COLUMNS[width]
     height_for_color = din_in_pixel[height] / ROWS_AND_COLUMNS[height]
 
@@ -99,7 +99,7 @@ def export(reduced_image, template_image, template_with_numbers_image,colors_arr
 def get_dimensions(image, din_format):
     from model.ImageManipulation import ImageManipulation
 
-    width, height = ImageManipulation.get_size_indicies(image)
+    width, height = ImageManipulation.get_size_indices(image)
     return img2pdf.mm_to_pt(DIN_FORMAT[din_format][width]), img2pdf.mm_to_pt(DIN_FORMAT[din_format][height])
 
 

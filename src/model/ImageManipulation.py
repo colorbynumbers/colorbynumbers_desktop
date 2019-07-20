@@ -110,7 +110,7 @@ class ImageManipulation:
                     '../../resources/SourceSerifPro-Regular.ttf'
                     draw = ImageDraw.Draw(img_numbers)
                     # font = ImageFont.truetype(<font-file>, <font-size>)
-                    font = ImageFont.truetype("../../resources/SourceSerifPro-Regular.ttf", 12,
+                    font = ImageFont.truetype("../resources/SourceSerifPro-Regular.ttf", 12,
                                               layout_engine=ImageFont.LAYOUT_RAQM)
                     # draw.text((x, y),"Sample Text",(r,g,b))
                     draw.text((j, i), str(surface_center_dict[str(i) + " " + str(j)]), fill=(0, 0, 0), font=font,
@@ -134,7 +134,7 @@ class ImageManipulation:
     @staticmethod
     def resize_to_din_format(image, din_format="DIN A4"):
         # resize to match 300 dpi
-        width, height = ImageManipulation.get_size_indicies(image)
+        width, height = ImageManipulation.get_size_indices(image)
         size = DIN_SIZE[din_format][width], DIN_SIZE[din_format][height]
         return image.resize(size, Image.LANCZOS)
 
@@ -143,7 +143,7 @@ class ImageManipulation:
         return False if image.width < image.height else True
 
     @staticmethod
-    def get_size_indicies(image):
+    def get_size_indices(image):
         width, height = (ONE, ZERO) if ImageManipulation.is_landscape(image) else (ZERO, ONE)
         return width, height
 
@@ -165,7 +165,7 @@ class ImageManipulation:
         '../../resources/SourceSerifPro-Regular.ttf'
         draw = ImageDraw.Draw(image)
         # font = ImageFont.truetype(<font-file>, <font-size>)
-        font = ImageFont.truetype("../../resources/SourceSerifPro-Regular.ttf", font_size)
+        font = ImageFont.truetype("../resources/SourceSerifPro-Regular.ttf", font_size)
         # draw.text((x, y),"Sample Text",(r,g,b))
         draw.text(point, text, (0, 0, 0), font=font)
         return image
