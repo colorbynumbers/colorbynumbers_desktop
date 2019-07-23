@@ -4,8 +4,8 @@ from configparser import ConfigParser
 import os
 
 DARWIN_CONFIG_FILE = '../config/darwin.ini'
-WINDOWS_CONFIG_FILE = '../../config/windows.ini'
-LINUX_CONFIG_FILE = '../../config/linux.ini'
+WINDOWS_CONFIG_FILE = '../config/windows.ini'
+LINUX_CONFIG_FILE = '../config/linux.ini'
 
 
 def get_os_name():

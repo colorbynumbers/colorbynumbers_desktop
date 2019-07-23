@@ -15,7 +15,7 @@ ROWS_AND_COLUMNS = (5, 7)
 
 
 def create_color_ref_images(colors_arr, din_format, template_image):
-    from src.model.ImageManipulation import ImageManipulation, DIN_SIZE
+    from model.ImageManipulation import ImageManipulation, DIN_SIZE
 
     din_in_pixel = DIN_SIZE["DIN A4"]
     width, height = ImageManipulation.get_size_indices(template_image)

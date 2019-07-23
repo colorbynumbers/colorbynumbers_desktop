@@ -48,8 +48,6 @@ class ImageManipulation:
                                                                           height, dimension, surface_center_dict)
         image_colors = ImageManipulation.get_color_info(k_means.cluster_centers_)
 
-        print("hurra")
-
         canvas = Image.fromarray(np.uint8(canvas))
         canvas_with_numbers = canvas.copy()
         canvas_with_numbers.paste(img_numbers, (0, 0), img_numbers)
