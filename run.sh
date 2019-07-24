@@ -1,4 +1,6 @@
 #!/bin/sh
+export PATH=~/anaconda3/bin:$PATH
+
 if conda env list | grep -q 'cbn'; then
     echo "cbn exists"
 else
