@@ -1,10 +1,13 @@
 #!/bin/sh
 if conda env list | grep -q 'cbn'; then
-   source activate cbn
+    echo "cbn exists"
 else
-   conda env create -f environment.yml
-   source activate cbn 
+    echo "cbn does not exists"
+    conda env create -f environment.yml
 fi
+
+eval "$(conda shell.bash hook)"
+conda activate cbn
 
 cd src/
 python ColorByNumber.py
